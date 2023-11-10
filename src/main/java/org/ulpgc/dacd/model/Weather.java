@@ -5,36 +5,81 @@ public class Weather {
 
     //setter???
     private double temperature;
-    private double rain;
+    private double humidity;
+    private double precipitation;
     private double wind;
+    private double clouds;
     private Instant timeStamp;
     private Location location;
 
-    public Weather(double temperature, double rain, double wind, Instant timeStamp, Location location) {
+  //TODO timeStamp??
+    //TODO setter??
+    //TODO weather pasarle datos en ()?? o no hace falta??
+
+    public Weather() {
         this.temperature = temperature;
-        this.rain = rain;
+        this.humidity = humidity;
+        this.precipitation = precipitation;
         this.wind = wind;
+        this.clouds = clouds;
         this.timeStamp = timeStamp;
         this.location = location;
+    }
+
+
+    public double getPrecipitation() {
+        return precipitation;
+    }
+
+    public void setPrecipitation(double precipitation) {
+        this.precipitation = precipitation;
     }
 
     public double getTemperature() {
         return temperature;
     }
 
-    public double getRain() {
-        return rain;
+    public void setTemperature(double temperature) {
+        this.temperature = temperature;
     }
 
     public double getWind() {
         return wind;
     }
 
+    public void setWind(double wind) {
+        this.wind = wind;
+    }
+
     public Instant getTimeStamp() {
         return timeStamp;
     }
 
+    public void setTimeStamp(Instant timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
     public Location getLocation() {
         return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public double getClouds() {
+        return clouds;
+    }
+
+    public void setClouds(double clouds) {
+        this.clouds = clouds;
+    }
+
+    public double getHumidity() {
+        return humidity;
+    }
+
+    public void setHumidity(double humidity) {
+        this.humidity = humidity;
     }
 }

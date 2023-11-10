@@ -1,7 +1,6 @@
 package org.ulpgc.dacd.control;
 
 import org.ulpgc.dacd.model.Location;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -24,23 +23,22 @@ public class WeatherController {
         return weatherProvider;
     }
 
-    public static void Task() {//throws JsonProcessingException{ TODO añadir en maven
+    private void Task() {//throws JsonProcessingException{ TODO añadir en maven; en el pom todas las dependencias que necesito
 
         Map<String, Location> locationMap = locationLoader();
         for(Map.Entry<String, Location> locationEntry: locationMap.entrySet()){
             Instant instant = Instant.now();
-            System.out.println(WeatherProvider.getWeather(locationEntry.getValue())); //TODO no imprime lo que quiero
-            //WeatherProvider.getWeather(locationEntry.getValue());
+            weatherProvider.getWeather(locationEntry.getValue());
             //TODO guardarlo en el store, en el sqliteweaterstore esta el metodo save => storer.Save()...
         }
 
     }
 
-    public static void runTask() throws IOException{ //TODO añadir el runtask pa que me lo ejecute cuando me interesa
+    public void runTask() throws IOException{ //TODO añadir el Timer pa que me lo ejecute cuando me interesa
         Task();
     }
 
-    public static Map<String, Location> locationLoader() {
+    public Map<String, Location> locationLoader() {
         String filePath = "src/main/resources/Locations.csv";
         Map<String, Location> locationMap = new HashMap<>();
 
@@ -61,6 +59,4 @@ public class WeatherController {
         }
         return locationMap;
     }
-
-
 }

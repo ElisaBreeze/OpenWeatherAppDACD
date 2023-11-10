@@ -1,7 +1,7 @@
 package org.ulpgc.dacd.control;
 
-public class WeatherStore{
-    public WeatherStore(String pathName) {
-    } //implements AutoCloseable { //class?? El profe puso que es una interfaz
+import org.ulpgc.dacd.model.Weather;
 
+public interface WeatherStore extends AutoCloseable{
+        //void Save(Weather weather);
 }
