@@ -41,26 +41,22 @@ public class OpenWeatherMapProvider implements WeatherProvider {
             Document weatherDocument = Jsoup.connect(apiCall).ignoreContentType(true).get();
             String information = weatherDocument.text();
 
-            //TODO quitar los sout??
-
             Gson gson = new Gson();
             JsonObject jsonObject = gson.fromJson(information, JsonObject.class);
             JsonArray jsonArray = jsonObject.getAsJsonArray("list");
-            System.out.println(jsonArray.toString());
 
             double temperature = jsonArray.get(0).getAsJsonObject().getAsJsonObject("main").get("temp").getAsDouble();
-            System.out.println("temperature: " +  temperature);
             double humidity = jsonArray.get(0).getAsJsonObject().getAsJsonObject("main").get("humidity").getAsDouble();
-            System.out.println("humidity: " +  humidity);
-
-            //TODO bien?? siempre sale cero
-            double precipitation = jsonArray.get(0).getAsJsonObject().get("pop").getAsDouble();
-            System.out.println("Precipitation percentage: " + precipitation);
-
+            double precipitation = jsonArray.get(0).getAsJsonObject().get("pop").getAsDouble(); //TODO bien?? siempre sale cero
             double wind = jsonArray.get(0).getAsJsonObject().getAsJsonObject("wind").get("speed").getAsDouble();
-            System.out.println("Wind: " + wind);
-
             int clouds = jsonArray.get(0).getAsJsonObject().getAsJsonObject("clouds").get("all").getAsInt();
+
+            //TODO quitar los sout??
+            System.out.println(jsonArray.toString());
+            System.out.println("temperature: " +  temperature);
+            System.out.println("humidity: " +  humidity);
+            System.out.println("Precipitation percentage: " + precipitation);
+            System.out.println("Wind: " + wind);
             System.out.println("Cloud percentage: " + clouds);
 
             Weather weather = new Weather();

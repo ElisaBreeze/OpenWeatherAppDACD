@@ -1,41 +1,58 @@
 package org.ulpgc.dacd.control;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.ulpgc.dacd.model.Location;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
 public class WeatherController {
     private final WeatherProvider weatherProvider;
-    private final WeatherStore weatherStore;
+    private final OpenWeatherMapProvider weatherStore;
 
-    public WeatherController(WeatherProvider weatherProvider, WeatherStore weatherStore) {
+    public WeatherController(WeatherProvider weatherProvider, OpenWeatherMapProvider weatherStore) {
         this.weatherProvider = weatherProvider;
         this.weatherStore = weatherStore;
     }
-    public WeatherStore getWeatherStore() {
+    public OpenWeatherMapProvider getWeatherStore() {
         return weatherStore;
     }
+
     public WeatherProvider getWeatherProvider() {
         return weatherProvider;
     }
 
-    private void Task() {//throws JsonProcessingException{ TODO añadir en maven; en el pom todas las dependencias que necesito
+    private void Task() throws JsonProcessingException {
 
         Map<String, Location> locationMap = locationLoader();
         for(Map.Entry<String, Location> locationEntry: locationMap.entrySet()){
-            Instant instant = Instant.now();
-            weatherProvider.getWeather(locationEntry.getValue());
-            //TODO guardarlo en el store, en el sqliteweaterstore esta el metodo save => storer.Save()...
-        }
 
+           weatherProvider.getWeather(locationEntry.getValue());
+           //TODO como guardar en la base de datos?
+
+        }
     }
 
     public void runTask() throws IOException{ //TODO añadir el Timer pa que me lo ejecute cuando me interesa
         Task();
+        /*
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        Runnable task = () -> {
+            Task();
+        };
+        int cadaCuantasHoras = 6;
+        int dias = 5 * 24 / cadaCuantasHoras;
+        scheduler.scheduleAtFixedRate(task, 0,cadaCuantasHoras, TimeUnit.HOURS);
+
+        try{
+            Thread.sleep(totalEjecuciones * cadaCuantasHoras * 60 * 60 * 1000);
+        } catch(InterruptedException exception){
+        exception.printStackTrace();
+        }
+        scheduler.shutdown();
+        */
     }
 
     public Map<String, Location> locationLoader() {
