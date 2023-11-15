@@ -1,8 +1,6 @@
 package org.ulpgc.dacd.model;
 
 public class Location {
-
-    //TODO setter??
     private double latitude;
     private double longitude;
     private String island;

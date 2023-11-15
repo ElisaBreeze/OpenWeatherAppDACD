@@ -2,8 +2,6 @@ package org.ulpgc.dacd.model;
 import java.time.Instant;
 
 public class Weather {
-
-    //setter???
     private double temperature;
     private double humidity;
     private double precipitation;
@@ -12,20 +10,7 @@ public class Weather {
     private Instant timeStamp;
     private Location location;
 
-  //TODO timeStamp??
-    //TODO setter??
-    //TODO weather pasarle datos en ()?? o no hace falta??
-
-    public Weather() {
-        this.temperature = temperature;
-        this.humidity = humidity;
-        this.precipitation = precipitation;
-        this.wind = wind;
-        this.clouds = clouds;
-        this.timeStamp = timeStamp;
-        this.location = location;
-    }
-
+    public Weather() {}
 
     public double getPrecipitation() {
         return precipitation;

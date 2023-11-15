@@ -2,7 +2,6 @@ package org.ulpgc.dacd.control;
 
 import org.ulpgc.dacd.model.Location;
 import org.ulpgc.dacd.model.Weather;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -11,6 +10,7 @@ import java.util.Map;
 
 public class SqliteWeatherStore implements WeatherStore {
     private String path;
+
     public SqliteWeatherStore(String path) {
         this.path = "jdbc:sqlite:" + path;
     }
@@ -41,6 +41,7 @@ public class SqliteWeatherStore implements WeatherStore {
             statement.execute(sqlCreatesTable);
         }
     }
+
     @Override
     public void close() throws Exception {
     }
@@ -69,6 +70,5 @@ public class SqliteWeatherStore implements WeatherStore {
                     ", " + weather.getClouds() + ");";
             statement.execute(insertSQL);
         }
-
     }
 }
