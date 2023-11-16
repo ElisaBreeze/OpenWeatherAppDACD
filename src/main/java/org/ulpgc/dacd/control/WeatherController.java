@@ -27,10 +27,9 @@ public class WeatherController {
     }
 
     public void runTask() throws SQLException {
-        // Task();
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
-           /*int days = 1;
+           int days = 1;
            @Override
            public void run() {
                try {
@@ -41,21 +40,7 @@ public class WeatherController {
                    exception.printStackTrace();
                }
            }
-       }, 0, TimeUnit.HOURS.toMillis(6));*/
-
-            int count = 1;
-
-            @Override
-            public void run() {
-                try {
-                    task();
-                    count++;
-                    if (count == 5) timer.cancel();
-                } catch (SQLException exception) {
-                    exception.printStackTrace();
-                }
-            }
-        }, 0, TimeUnit.SECONDS.toMillis(6));
+       }, 0, TimeUnit.HOURS.toMillis(6));
     }
 
     private void task() throws SQLException {
@@ -82,7 +67,7 @@ public class WeatherController {
                 locationMap.put(islandName, location);
             }
         } catch (IOException exception) {
-            exception.printStackTrace(); //es esta??
+            exception.printStackTrace();
         }
         return locationMap;
     }
