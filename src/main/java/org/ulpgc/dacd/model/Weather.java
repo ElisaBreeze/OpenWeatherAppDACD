@@ -5,12 +5,25 @@ public class Weather {
     private double temperature;
     private double humidity;
     private double precipitation;
+
+    public Weather(double temperature, double humidity, double precipitation, double wind, double clouds, Instant timeStamp, Location location) {
+        this.temperature = temperature;
+        this.humidity = humidity;
+        this.precipitation = precipitation;
+        this.wind = wind;
+        this.clouds = clouds;
+        this.timeStamp = timeStamp;
+        this.location = location;
+    }
+
     private double wind;
     private double clouds;
     private Instant timeStamp;
     private Location location;
 
-    public Weather() {}
+    public Weather() {
+
+    }
 
     public double getPrecipitation() {
         return precipitation;

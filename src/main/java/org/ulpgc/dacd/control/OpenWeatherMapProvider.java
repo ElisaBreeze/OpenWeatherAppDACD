@@ -39,6 +39,7 @@ public class OpenWeatherMapProvider implements WeatherProvider {
             String apiCall = "https://api.openweathermap.org/data/2.5/forecast" +
                     "?lat=" + location.getLatitude() +
                     "&lon=" + location.getLongitude() +
+                    "&units=metric" +
                     "&appid=" + apikey;
 
             Document weatherDocument = Jsoup.connect(apiCall).ignoreContentType(true).get();
@@ -55,14 +56,8 @@ public class OpenWeatherMapProvider implements WeatherProvider {
                     double precipitation = jsonArray.get(i).getAsJsonObject().get("pop").getAsDouble();
                     double wind = jsonArray.get(i).getAsJsonObject().getAsJsonObject("wind").get("speed").getAsDouble();
                     int clouds = jsonArray.get(i).getAsJsonObject().getAsJsonObject("clouds").get("all").getAsInt();
-                    Weather weather = new Weather();
-                    weather.setLocation(location);
-                    weather.setTemperature(temperature);
-                    weather.setPrecipitation(precipitation);
-                    weather.setHumidity(humidity);
-                    weather.setClouds(clouds);
-                    weather.setWind(wind);
-                    weather.setTimeStamp(timeStamp);
+
+                    Weather weather = new Weather(temperature, humidity, precipitation, wind, clouds, timeStamp, location);
                     weatherList.add(weather);
                     if (weatherList.size() == 5) {
                         break;
@@ -71,8 +66,7 @@ public class OpenWeatherMapProvider implements WeatherProvider {
             }
             return weatherList;
         } catch (IOException exception) {
-            exception.printStackTrace();
-            return null;
+            throw new RuntimeException(exception);
         }
     }
 }

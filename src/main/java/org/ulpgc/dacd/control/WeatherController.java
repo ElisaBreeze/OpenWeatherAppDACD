@@ -27,7 +27,7 @@ public class WeatherController {
     }
 
     public void runTask() throws SQLException {
-        Timer timer = new Timer();
+      Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
            int days = 1;
            @Override
@@ -37,7 +37,7 @@ public class WeatherController {
                    days++;
                    if(days == 5) timer.cancel();
                }catch(SQLException exception) {
-                   exception.printStackTrace();
+                   throw new RuntimeException(exception);
                }
            }
        }, 0, TimeUnit.HOURS.toMillis(6));
