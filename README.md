@@ -39,9 +39,9 @@ They are important, because they provide guidelines for the creation of a mainta
 - Dependency Inversion principle: The class WeatherController depends on both WeatherProvider and WeatherStore interfaces, which are abstractions
 
 ### Class Diagram
-The class Diagramm for this project is shown below:
+The class Diagram for this project is shown below:
 
-![Class Diagramm Image](DiagramaUML.png)
+![Class Diagram Image](DiagramaUML.png)
 
 ### Dependency Relationships
 Dependency Relationships refers to the connections between classes and its components. There are a few cases of these relationships which have been used: 
@@ -53,4 +53,4 @@ Dependency Relationships refers to the connections between classes and its compo
 ## Usage Instructions
 This program uses the java version 17. To run the code properly, you must insert your apikey and the path to the Data Base through arguments in the Main class. 
 With this, the only thing left to do is to run the program and see how the weather data is saved in the Data Base for each island. If there has been a change, or a new day has been added to the forecast, it will update the Data Base and insert the new data. If there haven't been any changes, the Data Base will stay the same.
-It is important to know that this programm is designed to run the task every 6 hours during 5 days, storing the data in the Data Base. Once the 5 days are over, it will cancel the task automatically.
+It is important to know that this program is designed to run the task every 6 hours during 5 days, storing the data in the Data Base. Once the 5 days are over, it will cancel the task automatically.
