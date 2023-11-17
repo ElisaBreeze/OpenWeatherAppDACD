@@ -39,7 +39,9 @@ They are important, because they provide guidelines for the creation of a mainta
 - Dependency Inversion principle: The class WeatherController depends on both WeatherProvider and WeatherStore interfaces, which are abstractions
 
 ### Class Diagram
+The class Diagramm for this project is shown below:
 
+![Class Diagramm Image](DiagramaUML.png)
 
 ### Dependency Relationships
 Dependency Relationships refers to the connections between classes and its components. There are a few cases of these relationships which have been used: 

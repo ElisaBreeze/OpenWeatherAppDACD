@@ -22,11 +22,7 @@ public class WeatherController {
         return weatherStore;
     }
 
-    public WeatherProvider getWeatherProvider() {
-        return weatherProvider;
-    }
-
-    public void runTask() throws SQLException {
+    public void runTask(){
       Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
            int days = 1;
@@ -57,7 +53,7 @@ public class WeatherController {
         String filePath = "src/main/resources/Locations.csv";
         Map<String, Location> locationMap = new HashMap<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line = "";
+            String line;
             while ((line = reader.readLine()) != null) {
                 String[] information = line.split("\t");
                 String islandName = information[0];
@@ -67,7 +63,7 @@ public class WeatherController {
                 locationMap.put(islandName, location);
             }
         } catch (IOException exception) {
-            exception.printStackTrace();
+            throw new RuntimeException(exception);
         }
         return locationMap;
     }

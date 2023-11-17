@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.util.Map;
 
 public class SqliteWeatherStore implements WeatherStore {
-    private String path;
+    private final String path;
 
     public SqliteWeatherStore(String path) {
         this.path = "jdbc:sqlite:" + path;
@@ -43,14 +43,15 @@ public class SqliteWeatherStore implements WeatherStore {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close(){
     }
 
     @Override
     public void save(Weather weather) throws SQLException {
         Connection connection = this.open();
         Statement statement = connection.createStatement();
-        String sql = "SELECT * FROM " + weather.getLocation().getIsland() + " WHERE TimeStamp = '" + weather.getTimeStamp().toString() + "'" + ";";
+        String sql = "SELECT * FROM " + weather.getLocation().getIsland() + " WHERE TimeStamp = '" +
+                weather.getTimeStamp().toString() + "'" + ";";
         if(statement.executeQuery(sql).next()) {
             String updateSQL = "UPDATE " + weather.getLocation().getIsland() +
                     " SET Temperature = " + weather.getTemperature() +

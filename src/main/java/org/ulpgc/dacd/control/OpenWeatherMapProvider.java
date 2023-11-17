@@ -16,18 +16,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.Jsoup;
 
 public class OpenWeatherMapProvider implements WeatherProvider {
-    private String apikey;
+    private final String apikey;
 
     public OpenWeatherMapProvider(String fileName) throws IOException {
         this.apikey = apikeyReader(fileName);
     }
 
-    public String getApikey() {
-        return apikey;
-    }
-
     public static String apikeyReader(String fileName) throws IOException {
-        String apikey = "";
+        String apikey;
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
         apikey = reader.readLine();
         return apikey;
