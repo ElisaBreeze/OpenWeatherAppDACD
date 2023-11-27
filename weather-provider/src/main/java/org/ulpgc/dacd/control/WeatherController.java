@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class WeatherController {
     private final WeatherProvider weatherProvider;
@@ -23,23 +22,20 @@ public class WeatherController {
     }
 
     public void runTask(){
-      Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-           int days = 1;
-           @Override
-           public void run() {
-               try {
-                   task();
-                   days++;
-                   if(days == 5) timer.cancel();
-               }catch(SQLException exception) {
-                   throw new RuntimeException(exception);
-               }
-           }
-       }, 0, TimeUnit.HOURS.toMillis(6));
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    task();
+                } catch (SQLException | IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }; timer.schedule(timerTask, 0,6*60*60*1000);
     }
 
-    private void task() throws SQLException {
+    private void task() throws SQLException, IOException {
         Map<String, Location> locationMap = locationLoader();
         for (Map.Entry<String, Location> locationEntry : locationMap.entrySet()) {
             List<Weather> weatherPredictions = weatherProvider.getWeather(locationEntry.getValue());
@@ -50,17 +46,14 @@ public class WeatherController {
     }
 
     public static Map<String, Location> locationLoader() {
-        String filePath = "src/main/resources/Locations.csv";
         Map<String, Location> locationMap = new HashMap<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("weather-provider/src/main/resources/Locations.csv"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] information = line.split("\t");
-                String islandName = information[0];
-                double latitude = Double.parseDouble(information[1]);
-                double longitude = Double.parseDouble(information[2]);
-                Location location = new Location(latitude, longitude, islandName);
-                locationMap.put(islandName, location);
+                Location location = new Location(Double.parseDouble(information[1]),
+                        Double.parseDouble(information[2]), information[0]);
+                locationMap.put(information[0], location);
             }
         } catch (IOException exception) {
             throw new RuntimeException(exception);

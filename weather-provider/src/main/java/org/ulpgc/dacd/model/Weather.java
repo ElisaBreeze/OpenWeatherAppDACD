@@ -10,6 +10,10 @@ public class Weather {
     private Instant timeStamp;
     private Location location;
 
+    //TODO check if correct
+    private String ss; //prediction provider
+    private Instant predictionTime;
+
     public Weather(double temperature, double humidity, double precipitation, double wind, double clouds, Instant timeStamp, Location location) {
         this.temperature = temperature;
         this.humidity = humidity;
