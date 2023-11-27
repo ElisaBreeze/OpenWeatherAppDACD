@@ -31,13 +31,8 @@ public class SqliteWeatherStore implements WeatherStore {
         Map<String, Location> locationMap = WeatherController.locationLoader();
         for(Map.Entry<String, Location> locationEntry: locationMap.entrySet()){
             String island = locationEntry.getValue().getIsland();
-            String sqlCreatesTable = "CREATE TABLE IF NOT EXISTS " + island + " (" +
-                    "TimeStamp TEXT PRIMARY KEY," +
-                    "Temperature REAL," +
-                    "Humidity REAL," +
-                    "Precipitation REAL," +
-                    "Wind REAL," +
-                    "Clouds REAL);";
+            String sqlCreatesTable = "CREATE TABLE IF NOT EXISTS " + island + " (" + "TimeStamp TEXT PRIMARY KEY," +
+                    "Temperature REAL," + "Humidity REAL," + "Precipitation REAL," + "Wind REAL," + "Clouds REAL);";
             statement.execute(sqlCreatesTable);
         }
     }
@@ -50,26 +45,11 @@ public class SqliteWeatherStore implements WeatherStore {
     public void save(Weather weather) throws SQLException {
         Connection connection = this.open();
         Statement statement = connection.createStatement();
-        String sql = "SELECT * FROM " + weather.getLocation().getIsland() + " WHERE TimeStamp = '" +
-                weather.getTimeStamp().toString() + "'" + ";";
-        if(statement.executeQuery(sql).next()) {
-            String updateSQL = "UPDATE " + weather.getLocation().getIsland() +
-                    " SET Temperature = " + weather.getTemperature() +
-                    ", Humidity = " + weather.getHumidity() +
-                    ", Precipitation = " + weather.getPrecipitation() +
-                    ", Wind = " + weather.getWind() +
-                    ", Clouds = " + weather.getClouds() +
-                    " WHERE TimeStamp = '" + weather.getTimeStamp().toString() + "'" + ";";
-            statement.execute(updateSQL);
-        } else {
-            String insertSQL = "INSERT INTO " + weather.getLocation().getIsland() +
-                    " VALUES ('" +  weather.getTimeStamp().toString() + "'" +
-                    ", " + weather.getTemperature() +
-                    ", " + weather.getHumidity() +
-                    ", " + weather.getPrecipitation() +
-                    ", " + weather.getWind() +
-                    ", " + weather.getClouds() + ");";
-            statement.execute(insertSQL);
-        }
+        String insertSQL = "INSERT OR REPLACE INTO " + weather.getLocation().getIsland() +
+                " VALUES ('" +  weather.getTimeStamp().toString() + "'" +
+                ", " + weather.getTemperature() + ", " + weather.getHumidity() +
+                ", " + weather.getPrecipitation() + ", " + weather.getWind() +
+                ", " + weather.getClouds() + ");";
+        statement.execute(insertSQL);
     }
 }

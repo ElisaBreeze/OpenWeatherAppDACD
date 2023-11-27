@@ -2,8 +2,6 @@ package org.ulpgc.dacd.control;
 
 import org.ulpgc.dacd.model.Location;
 import org.ulpgc.dacd.model.Weather;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -12,38 +10,27 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.jsoup.nodes.Document;
-import org.jsoup.Jsoup;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 
 public class OpenWeatherMapProvider implements WeatherProvider {
     private final String apikey;
 
-    public OpenWeatherMapProvider(String fileName) throws IOException {
-        this.apikey = apikeyReader(fileName);
-    }
-
-    public static String apikeyReader(String fileName) throws IOException {
-        String apikey;
-        BufferedReader reader = new BufferedReader(new FileReader(fileName));
-        apikey = reader.readLine();
-        return apikey;
-    }
+    public OpenWeatherMapProvider(String apikey)  { this.apikey = apikey; }
 
     @Override
-    public List<Weather> getWeather(Location location) {
-        try {
-            String apiCall = "https://api.openweathermap.org/data/2.5/forecast" +
-                    "?lat=" + location.getLatitude() +
-                    "&lon=" + location.getLongitude() +
-                    "&units=metric" +
-                    "&appid=" + apikey;
+    public List<Weather> getWeather(Location location) throws IOException { //TODO acortar a menos de 10 líneas
+        List<Weather> weatherList = new ArrayList<>();
+        String apiCall = apiCall(location);
+        HttpURLConnection httpURLConnection = connection(apiCall);
 
-            Document weatherDocument = Jsoup.connect(apiCall).ignoreContentType(true).get();
-            String information = weatherDocument.text();
-            Gson gson = new Gson();
-            JsonObject jsonObject = gson.fromJson(information, JsonObject.class);
+        if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            String responseInformation = responseReader(httpURLConnection);
+            JsonObject jsonObject = new Gson().fromJson(String.valueOf(responseInformation), JsonObject.class);
             JsonArray jsonArray = jsonObject.getAsJsonArray("list");
-            List<Weather> weatherList = new ArrayList<>();
             for (int i = 0; i < jsonArray.size(); i++) {
                 Instant timeStamp = Instant.ofEpochSecond(jsonArray.get(i).getAsJsonObject().get("dt").getAsLong());
                 if (timeStamp.atZone(ZoneId.systemDefault()).getHour() == 12) {
@@ -60,9 +47,31 @@ public class OpenWeatherMapProvider implements WeatherProvider {
                     }
                 }
             }
-            return weatherList;
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
+        }
+        return weatherList;
+    }
+
+    private String apiCall(Location location) {
+        return "https://api.openweathermap.org/data/2.5/forecast" +
+                "?lat=" + location.getLatitude() +
+                "&lon=" + location.getLongitude() +
+                "&units=metric" +
+                "&appid=" + apikey;
+    }
+
+    private HttpURLConnection connection(String apiCall) throws IOException {
+        HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(apiCall).openConnection();
+        httpURLConnection.setRequestMethod("GET");
+        return httpURLConnection;
+    }
+    private String responseReader(HttpURLConnection httpURLConnection) throws IOException {
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()))) {
+            String line;
+            StringBuilder response = new StringBuilder();
+            while ((line = bufferedReader.readLine()) != null) {
+                response.append(line);
+            }
+            return response.toString();
         }
     }
 }
