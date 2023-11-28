@@ -49,7 +49,7 @@ public class WeatherController {
 
     public static Map<String, Location> locationLoader() {
         Map<String, Location> locationMap = new HashMap<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader("weather-provider/src/main/resources/Locations.csv"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("prediction-provider/src/main/resources/Locations.csv"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] information = line.split("\t");

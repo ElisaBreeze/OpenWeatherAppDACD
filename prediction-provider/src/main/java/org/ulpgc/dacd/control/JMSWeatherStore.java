@@ -11,7 +11,7 @@ import java.time.Instant;
 
 public class JMSWeatherStore implements WeatherStore {
     private final String serverURL = ActiveMQConnection.DEFAULT_BROKER_URL;
-    private static String topic = "prediction.Weather";
+    private final String topic = "prediction.Weather";
 
     @Override
     public void save(Weather weather) throws JMSException {
@@ -21,7 +21,7 @@ public class JMSWeatherStore implements WeatherStore {
         Session session = connection.createSession(false,
                 Session.AUTO_ACKNOWLEDGE);
 
-        Destination destination = session.createQueue(topic);
+        Destination destination = session.createTopic(topic);
 
         MessageProducer messageProducer = session.createProducer(destination);
 

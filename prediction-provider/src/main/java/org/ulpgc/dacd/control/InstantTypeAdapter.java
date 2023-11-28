@@ -12,7 +12,7 @@ public class InstantTypeAdapter implements JsonSerializer<Instant>, JsonDeserial
         return new JsonPrimitive(instant.toString());
     }
 
-    @Override
+    @Override //TODO dejarlo o poner la clase abstract?
     public Instant deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         return Instant.parse(jsonElement.getAsString());
     }
