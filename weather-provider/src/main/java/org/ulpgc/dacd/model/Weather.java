@@ -1,18 +1,17 @@
 package org.ulpgc.dacd.model;
+import java.io.Serializable;
 import java.time.Instant;
 
-public class Weather {
+public class Weather implements Serializable {
     private double temperature;
     private double humidity;
     private double precipitation;
     private double wind;
     private double clouds;
-    private Instant timeStamp;
+    private Instant timeStamp; //TODO quitar esta explicación; cuando se hizo la prediccion; now
     private Location location;
-
-    //TODO check if correct
-    private String ss; //prediction provider
-    private Instant predictionTime;
+    private  String ss;
+    private Instant predictionTimeStamp; //TODO  quitar esta explicación; para cuando estoy prediciendo; future
 
     public Weather(double temperature, double humidity, double precipitation, double wind, double clouds, Instant timeStamp, Location location) {
         this.temperature = temperature;
