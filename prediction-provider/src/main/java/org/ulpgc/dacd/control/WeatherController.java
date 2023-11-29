@@ -2,12 +2,9 @@ package org.ulpgc.dacd.control;
 
 import org.ulpgc.dacd.model.Location;
 import org.ulpgc.dacd.model.Weather;
-
-import javax.jms.JMSException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.*;
 
 public class WeatherController {
@@ -23,31 +20,35 @@ public class WeatherController {
         return weatherStore;
     }
 
-    public void runTask(){
+    public void runTask() {
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
                 try {
                     task();
-                } catch (SQLException | IOException | JMSException e) {
-                    throw new RuntimeException(e);
+                } catch (StoreExceptions exception) {
+                    throw new RuntimeException(exception); //TODO bien??
                 }
             }
         }; timer.schedule(timerTask, 0,6*60*60*1000);
     }
 
-    private void task() throws SQLException, IOException, JMSException {
+    private void task() throws StoreExceptions {
         Map<String, Location> locationMap = locationLoader();
         for (Map.Entry<String, Location> locationEntry : locationMap.entrySet()) {
-            List<Weather> weatherPredictions = weatherProvider.getWeather(locationEntry.getValue());
-            for (Weather weather : weatherPredictions) {
-                weatherStore.save(weather);
+            try {
+                List<Weather> weatherPredictions = weatherProvider.getWeather(locationEntry.getValue());
+                for (Weather weather : weatherPredictions) {
+                    weatherStore.save(weather);
+                }
+            } catch (StoreExceptions exception) {
+                throw new StoreExceptions(exception.getMessage(), exception);
             }
         }
     }
 
-    public static Map<String, Location> locationLoader() {
+    public static Map<String, Location> locationLoader() throws StoreExceptions {
         Map<String, Location> locationMap = new HashMap<>();
         try (BufferedReader reader = new BufferedReader(new FileReader("prediction-provider/src/main/resources/Locations.csv"))) {
             String line;
@@ -58,7 +59,7 @@ public class WeatherController {
                 locationMap.put(information[0], location);
             }
         } catch (IOException exception) {
-            throw new RuntimeException(exception);
+            throw new StoreExceptions(exception.getMessage(), exception);
         }
         return locationMap;
     }

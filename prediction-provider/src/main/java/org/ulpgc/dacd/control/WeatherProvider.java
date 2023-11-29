@@ -7,5 +7,5 @@ import java.io.IOException;
 import java.util.List;
 
 public interface WeatherProvider{
-    List<Weather> getWeather(Location location) throws IOException;
+    List<Weather> getWeather(Location location) throws StoreExceptions;
 }

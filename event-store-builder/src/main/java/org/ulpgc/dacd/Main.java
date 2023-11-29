@@ -1,9 +1,9 @@
-package org.example;
+package org.ulpgc.dacd;
 
-import javax.jms.JMSException;
+import org.ulpgc.dacd.control.StoreExceptions;
 
 public class Main {
-    public static void main(String[] args) throws JMSException {
+    public static void main(String[] args) throws StoreExceptions {
         WeatherEventReceiver weatherEventReceiver = new WeatherEventReceiver();
         weatherEventReceiver.messageReceiver();
     }

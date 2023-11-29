@@ -5,5 +5,5 @@ import org.ulpgc.dacd.model.Weather;
 import javax.jms.JMSException;
 
 public interface WeatherStore extends AutoCloseable{
-    void save(Weather weather) throws JMSException;
+    void save(Weather weather) throws StoreExceptions;
 }

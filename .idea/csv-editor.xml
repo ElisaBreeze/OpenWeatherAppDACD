@@ -3,7 +3,7 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="/weather-provider/src/main/resources/Locations.csv">
+        <entry key="/prediction-provider/src/main/resources/Locations.csv">
           <value>
             <Attribute>
               <option name="separator" value="&#9;" />

@@ -14,8 +14,9 @@ public class JMSWeatherStore implements WeatherStore {
     private final String topic = "prediction.Weather";
 
     @Override
-    public void save(Weather weather) throws JMSException {
-        Connection connection = new ActiveMQConnectionFactory(serverURL).createConnection();
+    public void save(Weather weather) throws StoreExceptions {
+        try {
+            Connection connection = new ActiveMQConnectionFactory(serverURL).createConnection();
         connection.start();
 
         Session session = connection.createSession(false,
@@ -33,6 +34,9 @@ public class JMSWeatherStore implements WeatherStore {
         messageProducer.send(textMessage);
 
         connection.close();
+        } catch (JMSException exception) {
+            throw new StoreExceptions(exception.getMessage(), exception);
+        }
     }
 
     @Override
