@@ -25,7 +25,7 @@ public class WeatherEventReceiver {
         }
     }
 
-    public void messageReceiver() throws StoreExceptions { //TODO acortarlo?
+    public void messageReceiver() throws StoreExceptions { //TODO acortarlo? close??
         try {
             Connection connection = new ActiveMQConnectionFactory(serverURL).createConnection();
             connection.start();
@@ -39,7 +39,6 @@ public class WeatherEventReceiver {
                     throw new RuntimeException(exceptions);
                 }
             });
-            connection.close();
         } catch (JMSException exception) {
             throw new StoreExceptions(exception.getMessage(), exception);
         }
