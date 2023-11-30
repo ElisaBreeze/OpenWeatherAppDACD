@@ -16,10 +16,6 @@ public class WeatherController {
         this.weatherStore = weatherStore;
     }
 
-    public WeatherStore getWeatherStore() {
-        return weatherStore;
-    }
-
     public void runTask() {
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {

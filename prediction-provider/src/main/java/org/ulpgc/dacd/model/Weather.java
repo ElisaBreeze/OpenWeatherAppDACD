@@ -8,10 +8,8 @@ public class Weather implements Serializable {
     private double precipitation;
     private double wind;
     private double clouds;
-    private Instant timeStamp; //TODO quitar esta explicación; cuando se hizo la prediccion; now
+    private Instant timeStamp;
     private Location location;
-    private  String ss;
-    private Instant predictionTimeStamp; //TODO  quitar esta explicación; para cuando estoy prediciendo; future
 
     public Weather(double temperature, double humidity, double precipitation, double wind, double clouds, Instant timeStamp, Location location) {
         this.temperature = temperature;
@@ -22,6 +20,8 @@ public class Weather implements Serializable {
         this.timeStamp = timeStamp;
         this.location = location;
     }
+
+    //TODO borro los getter o hacen falta??
 
     public double getPrecipitation() {
         return precipitation;

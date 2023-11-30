@@ -15,45 +15,27 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-
 public class OpenWeatherMapProvider implements WeatherProvider {
     private final String apikey;
 
-    public OpenWeatherMapProvider(String apikey)  { this.apikey = apikey; }
+    public OpenWeatherMapProvider(String apikey) {
+        this.apikey = apikey;
+    }
 
     @Override
-    public List<Weather> getWeather(Location location) throws StoreExceptions { //TODO acortar a menos de 10 líneas
+    public List<Weather> getWeather(Location location) throws StoreExceptions {
         List<Weather> weatherList = new ArrayList<>();
         String apiCall = apiCall(location);
         try {
             HttpURLConnection httpURLConnection = connection(apiCall);
-            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                String responseInformation = responseReader(httpURLConnection);
-                JsonObject jsonObject = new Gson().fromJson(responseInformation, JsonObject.class);
-                JsonArray jsonArray = jsonObject.getAsJsonArray("list");
-                for (int i = 0; i < jsonArray.size(); i++) {
-                    Instant timeStamp = Instant.ofEpochSecond(jsonArray.get(i).getAsJsonObject().get("dt").getAsLong());
-                    if (timeStamp.atZone(ZoneId.systemDefault()).getHour() == 12) {
-                        double temperature = jsonArray.get(i).getAsJsonObject().getAsJsonObject("main").get("temp").getAsDouble();
-                        double humidity = jsonArray.get(i).getAsJsonObject().getAsJsonObject("main").get("humidity").getAsDouble();
-                        double precipitation = jsonArray.get(i).getAsJsonObject().get("pop").getAsDouble();
-                        double wind = jsonArray.get(i).getAsJsonObject().getAsJsonObject("wind").get("speed").getAsDouble();
-                        int clouds = jsonArray.get(i).getAsJsonObject().getAsJsonObject("clouds").get("all").getAsInt();
-
-                        Weather weather = new Weather(temperature, humidity, precipitation, wind, clouds, timeStamp, location);
-                        weatherList.add(weather);
-                        if (weatherList.size() == 5) {
-                            break;
-                        }
-                    }
-                }
+            if (connection(apiCall).getResponseCode() == HttpURLConnection.HTTP_OK) {
+                JsonObject jsonObject = new Gson().fromJson(responseReader(httpURLConnection), JsonObject.class);
+                arrayProcessing(jsonObject, weatherList, location);
             }
             return weatherList;
         } catch (IOException exception) {
             throw new StoreExceptions(exception.getMessage(), exception);
         }
-
-
     }
 
     private String apiCall(Location location) {
@@ -73,6 +55,7 @@ public class OpenWeatherMapProvider implements WeatherProvider {
             throw new StoreExceptions(exception.getMessage(), exception);
         }
     }
+
     private String responseReader(HttpURLConnection httpURLConnection) throws StoreExceptions {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()))) {
             String line;
@@ -83,6 +66,26 @@ public class OpenWeatherMapProvider implements WeatherProvider {
             return response.toString();
         } catch (IOException exception) {
             throw new StoreExceptions(exception.getMessage(), exception);
+        }
+    }
+
+    private void arrayProcessing(JsonObject jsonObject, List<Weather> weatherList, Location location) {
+        JsonArray jsonArray = jsonObject.getAsJsonArray("list");
+        for (int i = 0; i < jsonArray.size() && weatherList.size() < 5; i++) {
+            weatherDataProcessing(jsonArray.get(i).getAsJsonObject(), weatherList, location);
+        }
+    }
+
+    private void weatherDataProcessing(JsonObject jsonArray, List<Weather> weatherList, Location location) {
+        Instant timeStamp = Instant.ofEpochSecond(jsonArray.get("dt").getAsLong());
+        if (timeStamp.atZone(ZoneId.systemDefault()).getHour() == 12) {
+            double temperature = jsonArray.getAsJsonObject("main").get("temp").getAsDouble();
+            double humidity = jsonArray.getAsJsonObject("main").get("humidity").getAsDouble();
+            double precipitation = jsonArray.get("pop").getAsDouble();
+            double wind = jsonArray.getAsJsonObject("wind").get("speed").getAsDouble();
+            int clouds = jsonArray.getAsJsonObject("clouds").get("all").getAsInt();
+            Weather weather = new Weather(temperature, humidity, precipitation, wind, clouds, timeStamp, location);
+            weatherList.add(weather);
         }
     }
 }
