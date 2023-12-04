@@ -11,11 +11,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WeatherEventReceiver {
     private final String serverURL = ActiveMQConnection.DEFAULT_BROKER_URL;
     private final String topic = "prediction.Weather";
     private final String eventStoringPath = "eventStore";
+    private final String ss = "prediction-provider";
 
     public static void main(String[] args) {
         try {
@@ -25,7 +28,7 @@ public class WeatherEventReceiver {
         }
     }
 
-    public void messageReceiver() throws StoreExceptions { //TODO acortarlo? close??
+    public void messageReceiver() throws StoreExceptions {
         try {
             Connection connection = new ActiveMQConnectionFactory(serverURL).createConnection();
             connection.start();
@@ -45,10 +48,12 @@ public class WeatherEventReceiver {
     }
 
     private void messageCreator(Message message) throws StoreExceptions {
+        List<String> events = new ArrayList<>();
         if (message instanceof TextMessage textMessage) {
             try {
                 String weatherData = textMessage.getText();
-                saveEvent(eventStoringPath, weatherData);
+                events.add(weatherData);
+                saveEvent(eventStoringPath, events);
                 System.out.println("Datos: " + weatherData);
             } catch (JMSException exception) {
                 throw new StoreExceptions(exception.getMessage(), exception);
@@ -56,13 +61,16 @@ public class WeatherEventReceiver {
         }
     }
 
-    private void saveEvent(String eventStoringPath, String weatherData) throws StoreExceptions {
+    private void saveEvent(String eventStoringPath, List events) throws StoreExceptions {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String formattedDate = LocalDate.now().format(dateTimeFormatter);
-        Path eventStorer = Paths.get(eventStoringPath, "prediction.Weather", "ss", formattedDate + ".events");
+        Path eventStorer = Paths.get(eventStoringPath, "prediction.Weather", ss, formattedDate + ".events");
         directoryCreator(eventStorer.getParent());
-        try (FileWriter fileWriter = new FileWriter(eventStorer.toString())) {
-            fileWriter.write(weatherData + "\n");
+        try (FileWriter fileWriter = new FileWriter(eventStorer.toString(), true)) {
+            for (Object data : events){
+                fileWriter.write(data.toString() + "\n");
+            }
+            events.clear(); //TODO quitar si no va
         } catch (IOException exception) {
             throw new StoreExceptions(exception.getMessage(), exception);
         }
