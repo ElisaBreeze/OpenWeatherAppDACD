@@ -9,9 +9,11 @@ public class Weather implements Serializable {
     private double wind;
     private double clouds;
     private Instant timeStamp;
+    private Instant predictionTime;
+    private String ss;
     private Location location;
 
-    public Weather(double temperature, double humidity, double precipitation, double wind, double clouds, Instant timeStamp, Location location) {
+    public Weather(double temperature, double humidity, double precipitation, double wind, double clouds, Instant predictionTime, Location location, Instant timeStamp, String ss) {
         this.temperature = temperature;
         this.humidity = humidity;
         this.precipitation = precipitation;
@@ -19,9 +21,9 @@ public class Weather implements Serializable {
         this.clouds = clouds;
         this.timeStamp = timeStamp;
         this.location = location;
+        this.ss = ss;
+        this.predictionTime = predictionTime;
     }
-
-    //TODO borro los getter o hacen falta??
 
     public double getPrecipitation() {
         return precipitation;
@@ -48,5 +50,13 @@ public class Weather implements Serializable {
     }
     public double getHumidity() {
         return humidity;
+    }
+
+    public Instant getPredictionTime() {
+        return predictionTime;
+    }
+
+    public String getSs() {
+        return ss;
     }
 }

@@ -17,6 +17,7 @@ import java.net.URL;
 
 public class OpenWeatherMapProvider implements WeatherProvider {
     private final String apikey;
+    private final String ss = "prediction-provider.OpenWeatherMap";
 
     public OpenWeatherMapProvider(String apikey) {
         this.apikey = apikey;
@@ -77,14 +78,14 @@ public class OpenWeatherMapProvider implements WeatherProvider {
     }
 
     private void weatherDataProcessing(JsonObject jsonArray, List<Weather> weatherList, Location location) {
-        Instant timeStamp = Instant.ofEpochSecond(jsonArray.get("dt").getAsLong());
-        if (timeStamp.atZone(ZoneId.systemDefault()).getHour() == 12) {
+        Instant predictionTime = Instant.ofEpochSecond(jsonArray.get("dt").getAsLong());
+        if (predictionTime.atZone(ZoneId.systemDefault()).getHour() == 12) {
             double temperature = jsonArray.getAsJsonObject("main").get("temp").getAsDouble();
             double humidity = jsonArray.getAsJsonObject("main").get("humidity").getAsDouble();
             double precipitation = jsonArray.get("pop").getAsDouble();
             double wind = jsonArray.getAsJsonObject("wind").get("speed").getAsDouble();
             int clouds = jsonArray.getAsJsonObject("clouds").get("all").getAsInt();
-            Weather weather = new Weather(temperature, humidity, precipitation, wind, clouds, timeStamp, location);
+            Weather weather = new Weather(temperature, humidity, precipitation, wind, clouds, predictionTime, location, Instant.now(), ss);
             weatherList.add(weather);
         }
     }
