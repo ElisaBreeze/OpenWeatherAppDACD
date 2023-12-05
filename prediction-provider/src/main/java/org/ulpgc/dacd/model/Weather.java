@@ -8,18 +8,18 @@ public class Weather implements Serializable {
     private double precipitation;
     private double wind;
     private double clouds;
-    private Instant timeStamp;
+    private Instant ts;
     private Instant predictionTime;
     private String ss;
     private Location location;
 
-    public Weather(double temperature, double humidity, double precipitation, double wind, double clouds, Instant predictionTime, Location location, Instant timeStamp, String ss) {
+    public Weather(double temperature, double humidity, double precipitation, double wind, double clouds, Instant predictionTime, Location location, Instant ts, String ss) {
         this.temperature = temperature;
         this.humidity = humidity;
         this.precipitation = precipitation;
         this.wind = wind;
         this.clouds = clouds;
-        this.timeStamp = timeStamp;
+        this.ts = ts;
         this.location = location;
         this.ss = ss;
         this.predictionTime = predictionTime;
@@ -37,8 +37,8 @@ public class Weather implements Serializable {
         return wind;
     }
 
-    public Instant getTimeStamp() {
-        return timeStamp;
+    public Instant getTs() {
+        return ts;
     }
 
     public Location getLocation() {

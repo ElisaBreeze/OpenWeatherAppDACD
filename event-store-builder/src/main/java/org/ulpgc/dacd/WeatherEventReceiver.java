@@ -18,7 +18,6 @@ public class WeatherEventReceiver {
     private final String serverURL = ActiveMQConnection.DEFAULT_BROKER_URL;
     private final String topic = "prediction.Weather";
     private final String eventStoringPath = "eventStore";
-    private final String ss = "prediction-provider";
 
     public static void main(String[] args) {
         try {
@@ -52,7 +51,7 @@ public class WeatherEventReceiver {
         if (message instanceof TextMessage textMessage) {
             try {
                 saveEvent(textMessage.getText());
-                System.out.println("Datos: " + textMessage.getText()); //TODO quitarlo
+                System.out.println("Datos: " + textMessage.getText()); //TODO quitar
             } catch (JMSException exception) {
                 throw new StoreExceptions(exception.getMessage(), exception);
             }
@@ -68,15 +67,20 @@ public class WeatherEventReceiver {
         }
     }
 
-    private File fileOf(String event) throws StoreExceptions {
+    private File fileOf(String event) throws StoreExceptions{
         JsonObject jsonObject = new Gson().fromJson(event, JsonObject.class);
-        String ts = jsonObject.get("timeStamp").getAsString();
+        String tsNotFormatted = jsonObject.get("ts").getAsString();
         String ss = jsonObject.get("ss").getAsString();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        String timeStamp = LocalDate.parse(ts).format(dateTimeFormatter);
-        Path filePath =  Paths.get(eventStoringPath, "prediction.Weather", ss, timeStamp + ".events");
+        String ts = dateFormatter(tsNotFormatted);
+        Path filePath = Paths.get(eventStoringPath, "prediction.Weather", ss, ts + ".events");
         directoryCreator(filePath.getParent());
         return filePath.toFile();
+        }
+
+    private String dateFormatter(String tsNotFormatted) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
+        LocalDate localDateTs = LocalDate.parse(tsNotFormatted, dateTimeFormatter);
+        return localDateTs.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
     }
 
     private void directoryCreator(Path directoryPath) throws StoreExceptions {
