@@ -8,9 +8,9 @@
 
 ## Summary of Functionality
 
-The main idea of the first project was to take data from a public and free API REST, which in this case is https://openweathermap.org/api. This service provides a free plan with 1000 daily requests for current, historical and future weather data predictions.
+The main idea of the first practice was to take data from a public and free API REST, which in this case is https://openweathermap.org/api. This service provides a free plan with 1000 daily requests for current, historical and future weather data predictions.
 
-The objective is to create a Java application that queries the service API periodically every 6 hours during 5 days to obtain the weather forecast predictions for the next 5 days at 12am for each of the 8 Canary Islands, and to communicate these predictions between two modules, which are called prediction-provider and event-store-builder.
+In the second practice, the objective is to create a Java application that queries the service API periodically every 6 hours during 5 days to obtain the weather forecast predictions for the next 5 days at 12am for each of the 8 Canary Islands, and to communicate these predictions between two modules, which are called prediction-provider and event-store-builder.
 
 The prediction-provider module takes the data from the OpenWeatherMapAPI, and sends it as an event to a message broker using the Java Message Service.
 On the other hand, the event-store-builder module listens to the message broker, collects the data and saves them in separate files, named by the query date.
@@ -40,9 +40,13 @@ They are important, because they provide guidelines for the creation of a mainta
 - Dependency Inversion principle: The class WeatherController depends on both WeatherProvider and WeatherStore interfaces, providing modularity and flexibility
 
 ### Class Diagram
-The class Diagram for this project is shown below:
+The class Diagrams for this project are shown below:
 
-![Class Diagram Image](DiagramaUML.png)
+prediction-provider module class diagram:
+![prediction-provider Class Diagram](UMLp-p.png)
+
+event-store-builder module class diagram:
+![event-store-builder Class Diagram](UMLe-s-b.png)
 
 ### Dependency Relationships
 Dependency Relationships refers to the connections between classes and its components. There are a few cases of these relationships which have been used: 
@@ -51,10 +55,14 @@ Dependency Relationships refers to the connections between classes and its compo
 - The class OpenWeatherMapProvider implements the WeatherProvider interface
 - In the class WeatherController, there is a dependency with both WeatherProvider and WeatherStore
 - The module event-store-builder has the prediction-provider module as a dependency, to be able to use the StoreExceptions Class
+- The class JMSWeatherStore has a dependency on the class InstantTypeAdapter, used to serialize in this case
+- In the prediction-provider module, the classes JMSWeatherStore, OpenWeatherMapProvider, WeatherController, WeatherProvider and WeatherStore depend on the StoreExceptions class to manage the exceptions
+- In the event-store-builder module, WeatherEventReceiver depends on StoreExceptions to manage the exceptions
+
 ## Usage Instructions
 This program uses the java version 17. To run the code properly, you must insert your apikey through arguments in the Main class and set up ActiveMQ as the message broker.
 With this, the only thing left to do is to run the program and see how the weather data is saved in the specified directory, with the query date as its file name.
-It is important to know that this program is designed to run the task every 6 hours during 5 days, storing the data in the files created in the chosen directory.
+It is important to know that this program is designed to run the task every 6 hours, storing the data in the files created in the chosen directory.
 
 
 

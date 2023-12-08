@@ -24,7 +24,7 @@ public class WeatherController {
                 try {
                     task();
                 } catch (StoreExceptions exception) {
-                    throw new RuntimeException(exception); //TODO bien??
+                    throw new RuntimeException(exception);
                 }
             }
         }; timer.schedule(timerTask, 0,6*60*60*1000);

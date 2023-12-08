@@ -10,7 +10,6 @@ import java.time.Instant;
 
 public class JMSWeatherStore implements WeatherStore {
     private final String serverURL = ActiveMQConnection.DEFAULT_BROKER_URL;
-    private final String topic = "prediction.Weather";
 
     @Override
     public void save(Weather weather) throws StoreExceptions {
@@ -18,8 +17,8 @@ public class JMSWeatherStore implements WeatherStore {
             Connection connection = new ActiveMQConnectionFactory(serverURL).createConnection();
             connection.start();
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Destination destination = session.createTopic(topic);
-            MessageProducer messageProducer = session.createProducer(destination);
+            Topic topicName = session.createTopic("prediction.Weather");
+            MessageProducer messageProducer = session.createProducer(topicName);
             TextMessage textMessage = messageCreator(session, weather);
             messageProducer.send(textMessage);
             connection.close();
@@ -38,6 +37,5 @@ public class JMSWeatherStore implements WeatherStore {
     }
 
     @Override
-    public void close(){
-    }
+    public void close(){}
 }

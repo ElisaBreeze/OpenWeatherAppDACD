@@ -16,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 
 public class WeatherEventReceiver {
     private final String serverURL = ActiveMQConnection.DEFAULT_BROKER_URL;
-    private final String topic = "prediction.Weather";
     private final String eventStoringPath = "eventStore";
 
     public static void main(String[] args) {
@@ -33,8 +32,8 @@ public class WeatherEventReceiver {
             connection.setClientID("event-store-builder");
             connection.start();
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Topic topicDestination = session.createTopic(topic);
-            MessageConsumer consumer = session.createDurableSubscriber(topicDestination,"eventStoreBuilder-prediction.Weather");
+            Topic topicName = session.createTopic("prediction.Weather");
+            MessageConsumer consumer = session.createDurableSubscriber(topicName,"eventStoreBuilder-prediction.Weather");
             consumer.setMessageListener(message -> {
                 try {
                     messageCreator(message);
@@ -51,7 +50,6 @@ public class WeatherEventReceiver {
         if (message instanceof TextMessage textMessage) {
             try {
                 saveEvent(textMessage.getText());
-                System.out.println("Datos: " + textMessage.getText()); //TODO quitar
             } catch (JMSException exception) {
                 throw new StoreExceptions(exception.getMessage(), exception);
             }
