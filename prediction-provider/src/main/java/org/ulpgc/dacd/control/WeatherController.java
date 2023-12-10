@@ -2,9 +2,9 @@ package org.ulpgc.dacd.control;
 
 import org.ulpgc.dacd.model.Location;
 import org.ulpgc.dacd.model.Weather;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class WeatherController {
@@ -46,7 +46,9 @@ public class WeatherController {
 
     public static Map<String, Location> locationLoader() throws StoreExceptions {
         Map<String, Location> locationMap = new HashMap<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader("prediction-provider/src/main/resources/Locations.csv"))) {
+        try (InputStream inputStream = Objects.requireNonNull(
+                WeatherController.class.getClassLoader().getResourceAsStream("Locations.csv"));
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] information = line.split("\t");
@@ -54,7 +56,7 @@ public class WeatherController {
                         Double.parseDouble(information[2]), information[0]);
                 locationMap.put(information[0], location);
             }
-        } catch (IOException exception) {
+        } catch (IOException | NullPointerException | NumberFormatException exception) {
             throw new StoreExceptions(exception.getMessage(), exception);
         }
         return locationMap;

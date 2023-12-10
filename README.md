@@ -60,7 +60,8 @@ Dependency Relationships refers to the connections between classes and its compo
 - In the event-store-builder module, WeatherEventReceiver depends on StoreExceptions to manage the exceptions
 
 ## Usage Instructions
-This program uses the java version 17. To run the code properly, you must insert your apikey through arguments in the Main class and set up ActiveMQ as the message broker.
+This program uses the java version 17. To run the code properly, you must insert your apikey through arguments in the Main class of prediction-provider and set up ActiveMQ as the message broker.
+You will also have to insert the route to the directory where you want to save the events, by arguments in the Main class of event-store-builder. The idea is, that you add this to the end of your desired route: "eventStore/prediction.Weather", so that the structure of the directory is as wanted in the practice.
 With this, the only thing left to do is to run the program and see how the weather data is saved in the specified directory, with the query date as its file name.
 It is important to know that this program is designed to run the task every 6 hours, storing the data in the files created in the chosen directory.
 

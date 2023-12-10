@@ -16,15 +16,9 @@ import java.time.format.DateTimeFormatter;
 
 public class WeatherEventReceiver {
     private final String serverURL = ActiveMQConnection.DEFAULT_BROKER_URL;
-    private final String eventStoringPath = "eventStore";
+    private final String eventStoringPath;
 
-    public static void main(String[] args) {
-        try {
-            new WeatherEventReceiver().messageReceiver();
-        } catch (StoreExceptions exception) {
-            throw new RuntimeException(exception);
-        }
-    }
+    public WeatherEventReceiver(String eventStoringPath){ this.eventStoringPath = eventStoringPath; }
 
     public void messageReceiver() throws StoreExceptions {
         try {
@@ -70,7 +64,7 @@ public class WeatherEventReceiver {
         String tsNotFormatted = jsonObject.get("ts").getAsString();
         String ss = jsonObject.get("ss").getAsString();
         String ts = dateFormatter(tsNotFormatted);
-        Path filePath = Paths.get(eventStoringPath, "prediction.Weather", ss, ts + ".events");
+        Path filePath = Paths.get(eventStoringPath, ss, ts + ".events");
         directoryCreator(filePath.getParent());
         return filePath.toFile();
         }
