@@ -20,7 +20,7 @@ public class WeatherEventReceiver {
 
     public WeatherEventReceiver(String eventStoringPath){ this.eventStoringPath = eventStoringPath; }
 
-    public void messageReceiver() throws StoreExceptions {
+    public void messageReceiver() throws StoreException {
         try {
             Connection connection = new ActiveMQConnectionFactory(serverURL).createConnection();
             connection.setClientID("event-store-builder");
@@ -31,35 +31,35 @@ public class WeatherEventReceiver {
             consumer.setMessageListener(message -> {
                 try {
                     messageCreator(message);
-                } catch (StoreExceptions exceptions) {
+                } catch (StoreException exceptions) {
                     throw new RuntimeException(exceptions);
                 }
             });
         } catch (JMSException exception) {
-            throw new StoreExceptions(exception.getMessage(), exception);
+            throw new StoreException(exception.getMessage(), exception);
         }
     }
 
-    private void messageCreator(Message message) throws StoreExceptions {
+    private void messageCreator(Message message) throws StoreException {
         if (message instanceof TextMessage textMessage) {
             try {
                 saveEvent(textMessage.getText());
             } catch (JMSException exception) {
-                throw new StoreExceptions(exception.getMessage(), exception);
+                throw new StoreException(exception.getMessage(), exception);
             }
         }
     }
 
-    private void saveEvent(String event) throws StoreExceptions {
+    private void saveEvent(String event) throws StoreException {
         File file = fileOf(event);
         try (FileWriter fileWriter = new FileWriter(file, true)) {
                 fileWriter.write(event + "\n");
         } catch (IOException exception) {
-            throw new StoreExceptions(exception.getMessage(), exception);
+            throw new StoreException(exception.getMessage(), exception);
         }
     }
 
-    private File fileOf(String event) throws StoreExceptions{
+    private File fileOf(String event) throws StoreException {
         JsonObject jsonObject = new Gson().fromJson(event, JsonObject.class);
         String tsNotFormatted = jsonObject.get("ts").getAsString();
         String ss = jsonObject.get("ss").getAsString();
@@ -75,12 +75,12 @@ public class WeatherEventReceiver {
         return localDateTs.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
     }
 
-    private void directoryCreator(Path directoryPath) throws StoreExceptions {
+    private void directoryCreator(Path directoryPath) throws StoreException {
         if (!Files.exists(directoryPath)) {
             try {
                 Files.createDirectories(directoryPath);
             } catch (IOException exception) {
-                throw new StoreExceptions(exception.getMessage(), exception);
+                throw new StoreException(exception.getMessage(), exception);
             }
         }
     }

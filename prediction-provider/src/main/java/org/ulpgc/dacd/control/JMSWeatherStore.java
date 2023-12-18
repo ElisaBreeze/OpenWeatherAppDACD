@@ -12,7 +12,7 @@ public class JMSWeatherStore implements WeatherStore {
     private final String serverURL = ActiveMQConnection.DEFAULT_BROKER_URL;
 
     @Override
-    public void save(Weather weather) throws StoreExceptions {
+    public void save(Weather weather) throws StoreException {
         try {
             Connection connection = new ActiveMQConnectionFactory(serverURL).createConnection();
             connection.start();
@@ -23,16 +23,16 @@ public class JMSWeatherStore implements WeatherStore {
             messageProducer.send(textMessage);
             connection.close();
         } catch (JMSException exception) {
-            throw new StoreExceptions(exception.getMessage(), exception);
+            throw new StoreException(exception.getMessage(), exception);
         }
     }
 
-    private TextMessage messageCreator(Session session, Weather weather) throws StoreExceptions {
+    private TextMessage messageCreator(Session session, Weather weather) throws StoreException {
         Gson gson = new GsonBuilder().registerTypeAdapter(Instant.class, new InstantTypeAdapter()).create();
         try {
             return session.createTextMessage(gson.toJson(weather));
         } catch (JMSException exception) {
-            throw new StoreExceptions(exception.getMessage(), exception);
+            throw new StoreException(exception.getMessage(), exception);
         }
     }
 

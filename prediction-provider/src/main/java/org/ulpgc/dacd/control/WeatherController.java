@@ -23,14 +23,14 @@ public class WeatherController {
             public void run() {
                 try {
                     task();
-                } catch (StoreExceptions exception) {
+                } catch (StoreException exception) {
                     throw new RuntimeException(exception);
                 }
             }
         }; timer.schedule(timerTask, 0,6*60*60*1000);
     }
 
-    private void task() throws StoreExceptions {
+    private void task() throws StoreException {
         Map<String, Location> locationMap = locationLoader();
         for (Map.Entry<String, Location> locationEntry : locationMap.entrySet()) {
             try {
@@ -38,13 +38,13 @@ public class WeatherController {
                 for (Weather weather : weatherPredictions) {
                     weatherStore.save(weather);
                 }
-            } catch (StoreExceptions exception) {
-                throw new StoreExceptions(exception.getMessage(), exception);
+            } catch (StoreException exception) {
+                throw new StoreException(exception.getMessage(), exception);
             }
         }
     }
 
-    public static Map<String, Location> locationLoader() throws StoreExceptions {
+    public static Map<String, Location> locationLoader() throws StoreException {
         Map<String, Location> locationMap = new HashMap<>();
         try (InputStream inputStream = Objects.requireNonNull(
                 WeatherController.class.getClassLoader().getResourceAsStream("Locations.csv"));
@@ -57,7 +57,7 @@ public class WeatherController {
                 locationMap.put(information[0], location);
             }
         } catch (IOException | NullPointerException | NumberFormatException exception) {
-            throw new StoreExceptions(exception.getMessage(), exception);
+            throw new StoreException(exception.getMessage(), exception);
         }
         return locationMap;
     }

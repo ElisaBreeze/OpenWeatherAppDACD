@@ -5,5 +5,5 @@ import org.ulpgc.dacd.model.Weather;
 import java.util.List;
 
 public interface WeatherProvider{
-    List<Weather> getWeather(Location location) throws StoreExceptions;
+    List<Weather> getWeather(Location location) throws StoreException;
 }

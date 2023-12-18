@@ -23,7 +23,7 @@ public class OpenWeatherMapProvider implements WeatherProvider {
     }
 
     @Override
-    public List<Weather> getWeather(Location location) throws StoreExceptions {
+    public List<Weather> getWeather(Location location) throws StoreException {
         List<Weather> weatherList = new ArrayList<>();
         String apiCall = apiCall(location);
         try {
@@ -34,7 +34,7 @@ public class OpenWeatherMapProvider implements WeatherProvider {
             }
             return weatherList;
         } catch (IOException exception) {
-            throw new StoreExceptions(exception.getMessage(), exception);
+            throw new StoreException(exception.getMessage(), exception);
         }
     }
 
@@ -46,17 +46,17 @@ public class OpenWeatherMapProvider implements WeatherProvider {
                 "&appid=" + apikey;
     }
 
-    private HttpURLConnection connection(String apiCall) throws StoreExceptions {
+    private HttpURLConnection connection(String apiCall) throws StoreException {
         try {
             HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(apiCall).openConnection();
             httpURLConnection.setRequestMethod("GET");
             return httpURLConnection;
         } catch (IOException exception) {
-            throw new StoreExceptions(exception.getMessage(), exception);
+            throw new StoreException(exception.getMessage(), exception);
         }
     }
 
-    private String responseReader(HttpURLConnection httpURLConnection) throws StoreExceptions {
+    private String responseReader(HttpURLConnection httpURLConnection) throws StoreException {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()))) {
             String line;
             StringBuilder response = new StringBuilder();
@@ -65,7 +65,7 @@ public class OpenWeatherMapProvider implements WeatherProvider {
             }
             return response.toString();
         } catch (IOException exception) {
-            throw new StoreExceptions(exception.getMessage(), exception);
+            throw new StoreException(exception.getMessage(), exception);
         }
     }
 
