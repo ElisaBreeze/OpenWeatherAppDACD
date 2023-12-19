@@ -27,9 +27,8 @@ public class PriceEventReceiver {
             connection.setClientID("event-store-builder-price"); //TODO puede ser el mismo client?
             connection.start();
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Topic topicName = session.createTopic("prediction.Price");
-            MessageConsumer consumer = session.createDurableSubscriber(topicName,"eventStoreBuilder-prediction.Price");
-            //TODO from here on doesnt work
+            Topic topicName = session.createTopic("hotel.information");
+            MessageConsumer consumer = session.createDurableSubscriber(topicName,"eventStoreBuilder-hotel.information");
             consumer.setMessageListener(message -> {
                 try {
                     messageCreator(message);

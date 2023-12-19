@@ -28,7 +28,7 @@ public class XoteloPriceProvider implements PriceProvider {
 
 
     @Override
-    public List<Price> getPrice(Hotel hotel) throws StoreExceptions {
+    public List<Price> getPrice(Hotel hotel) throws StoreException {
         List<Price> priceList = new ArrayList<>();
         String apiCall = apiCall(hotel);
         try {
@@ -39,43 +39,44 @@ public class XoteloPriceProvider implements PriceProvider {
             }
             return priceList;
         } catch (IOException exception) {
-            throw new StoreExceptions(exception.getMessage(), exception);
+            throw new StoreException(exception.getMessage(), exception);
         }
     }
-    private String apiCall(Hotel hotel) {
+    private String apiCall(Hotel hotel) { //TODO cambiar fechas
         return "https://data.xotelo.com/api/rates" +
-            "?hotel_key=" +  hotel.getHotelKey() +
-            "&chk_in=" + checkIn +
-            "&chk_out=" + checkOut;
+                "?hotel_key=" +  hotel.getHotelKey() +
+                "&chk_in=" + checkIn +
+                "&chk_out=" + checkOut;
     }
 
-    private HttpURLConnection connection(String apiCall) throws StoreExceptions {
+    private HttpURLConnection connection(String apiCall) throws StoreException {
         try {
             HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(apiCall).openConnection();
             httpURLConnection.setRequestMethod("GET");
             return httpURLConnection;
         } catch (IOException exception) {
-            throw new StoreExceptions(exception.getMessage(), exception);
+            throw new StoreException(exception.getMessage(), exception);
         }
     }
 
-    private String responseReader(HttpURLConnection httpURLConnection) throws StoreExceptions {
+    private String responseReader(HttpURLConnection httpURLConnection) throws StoreException {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()))) {
             String line;
             StringBuilder response = new StringBuilder();
             while ((line = bufferedReader.readLine()) != null) {
+                System.out.println(line);
                 response.append(line);
             }
             return response.toString();
         } catch (IOException exception) {
-            throw new StoreExceptions(exception.getMessage(), exception);
+            throw new StoreException(exception.getMessage(), exception);
         }
     }
 
     private void arrayProcessing(JsonObject jsonObject, List<Price> priceList, Hotel hotel) {
         JsonArray jsonArray = jsonObject.getAsJsonObject("result").getAsJsonArray("rates");
-            for (int i = 0; i < jsonArray.size(); i++) {
-                priceDataProcessing(jsonArray.get(i).getAsJsonObject(), priceList, hotel);
+        for (int i = 0; i < jsonArray.size(); i++) {
+            priceDataProcessing(jsonArray.get(i).getAsJsonObject(), priceList, hotel);
         }
     }
 

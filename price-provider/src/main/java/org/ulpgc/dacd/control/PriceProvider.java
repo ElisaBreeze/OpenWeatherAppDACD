@@ -6,5 +6,5 @@ import org.ulpgc.dacd.model.Price;
 import java.util.List;
 
 public interface PriceProvider {
-    List<Price> getPrice(Hotel hotel) throws StoreExceptions;
+    List<Price> getPrice(Hotel hotel) throws StoreException;
 }

@@ -10,6 +10,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/price-provider/src/main/resources/Hotels.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="&#9;" />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>

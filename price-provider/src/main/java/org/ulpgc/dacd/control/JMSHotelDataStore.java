@@ -13,28 +13,27 @@ public class JMSHotelDataStore implements PriceStore {
     private final String serverURL = ActiveMQConnection.DEFAULT_BROKER_URL;
 
     @Override
-    public void save(Price price) throws StoreExceptions {
+    public void save(Price price) throws StoreException {
         try {
             Connection connection = new ActiveMQConnectionFactory(serverURL).createConnection();
             connection.start();
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Topic topicName = session.createTopic("hotel.price");
+            Topic topicName = session.createTopic("hotel.information");
             MessageProducer messageProducer = session.createProducer(topicName);
             TextMessage textMessage = messageCreator(session, price);
-            System.out.println(textMessage);
             messageProducer.send(textMessage);
             connection.close();
         } catch (JMSException exception) {
-            throw new StoreExceptions(exception.getMessage(), exception);
+            throw new StoreException(exception.getMessage(), exception);
         }
     }
 
-    private TextMessage messageCreator(Session session, Price price) throws StoreExceptions {
+    private TextMessage messageCreator(Session session, Price price) throws StoreException {
         Gson gson = new GsonBuilder().registerTypeAdapter(Instant.class, new InstantTypeAdapter()).create();
         try {
             return session.createTextMessage(gson.toJson(price));
         } catch (JMSException exception) {
-            throw new StoreExceptions(exception.getMessage(), exception);
+            throw new StoreException(exception.getMessage(), exception);
         }
     }
 

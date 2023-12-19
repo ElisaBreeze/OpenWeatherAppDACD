@@ -31,8 +31,8 @@ public class WeatherEventReceiver {
             consumer.setMessageListener(message -> {
                 try {
                     messageCreator(message);
-                } catch (StoreException exceptions) {
-                    throw new RuntimeException(exceptions);
+                } catch (StoreException exception) {
+                    throw new RuntimeException(exception);
                 }
             });
         } catch (JMSException exception) {

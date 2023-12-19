@@ -27,14 +27,14 @@ public class HotelDataController {
             public void run() {
                 try {
                     task();
-                } catch (StoreExceptions exception) {
+                } catch (StoreException exception) {
                     throw new RuntimeException(exception);
                 }
             }
         }; timer.schedule(timerTask, 0,6*60*60*1000);
     }
 
-    private void task() throws StoreExceptions {
+    private void task() throws StoreException {
         Map<String, Hotel> hotelsMap = hotelLoader();
         for (Map.Entry<String, Hotel> hotelEntry : hotelsMap.entrySet()) {
             try {
@@ -42,13 +42,13 @@ public class HotelDataController {
                 for (Price price : pricePredictions) {
                     hotelDataStore.save(price);
                 }
-            } catch (StoreExceptions exception) {
-                throw new StoreExceptions(exception.getMessage(), exception);
+            } catch (StoreException exception) {
+                throw new StoreException(exception.getMessage(), exception);
             }
         }
     }
 
-    public static Map<String, Hotel> hotelLoader() throws StoreExceptions {
+    public static Map<String, Hotel> hotelLoader() throws StoreException {
         Map<String, Hotel> hotelMap = new HashMap<>();
         try (InputStream inputStream = Objects.requireNonNull(
                 HotelDataController.class.getClassLoader().getResourceAsStream("Hotels.csv"));
@@ -60,7 +60,7 @@ public class HotelDataController {
                 hotelMap.put(information[0], hotel);
             }
         } catch (IOException | NullPointerException | NumberFormatException exception) {
-            throw new StoreExceptions(exception.getMessage(), exception);
+            throw new StoreException(exception.getMessage(), exception);
         }
         return hotelMap;
     }

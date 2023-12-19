@@ -1,7 +1,5 @@
 package org.ulpgc.dacd.model;
 
-import java.util.Date;
-
 public class Hotel {
     private String hotelName;
     private String island;
