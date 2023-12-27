@@ -12,6 +12,7 @@
         <module>prediction-provider</module>
         <module>event-store-builder</module>
         <module>price-provider</module>
+        <module>business-unit</module>
     </modules>
 
     <properties>

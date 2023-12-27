@@ -2,17 +2,12 @@ package org.ulpgc.dacd;
 
 public class Main {
     public static void main(String[] args) throws StoreException {
-        WeatherEventReceiver weatherEventReceiver = new WeatherEventReceiver(args[0]);
-        weatherEventReceiver.messageReceiver();
-
-        PriceEventReceiver priceEventReceiver = new PriceEventReceiver(args[1]);
-        priceEventReceiver.messageReceiver();
+        EventReceiver eventReceiver = new EventReceiver(args[0], args[1]);
+        eventReceiver.messageReceiver();
     }
 }
 
 /*
-Ambos en una clase => unirlo
-
 business Unit => se tiene que suscribir al broker(real time) tmb y del data lake lo coge, no tiene poequé, pero nos da datos anteriores. Pero data lake builder hay que guardarlo siempre, a mi no em hace falta, pero si arrancamos la unidad de negocio y los que dan datos no estan encendidos, no emiten datos por lo que no tendrá info ej tiempo real, por ello tal vez necesitas los ultimos datos del data lake => el ultimo fichero de cada tpico y cogo los ultimos datos
 o simplemente hacer suscrito durable!! y asi no tenemos que entrar al data lake => si nos interesa el ultimo dato
 
@@ -28,7 +23,16 @@ la buisness unit está suscrita de manera durablea los topicos que necesita y a 
 
  Actualizar info hoteles => 1 hotel por isla
  Luego ver que compensa mas: temperatura, viento, precipitaciones, nubosidad y precio! dar pa usuario las dos opciones => mejor tiempo y mejor precio, mejor precio-temperatura
- TODO SE CALCULA EN EL BUSINESS UNIT y lo calculado lo guardas tal cual al datamart => no tiene porque parecerse a los eventos
+ T ODO SE CALCULA EN EL BUSINESS UNIT y lo calculado lo guardas tal cual al datamart => no tiene porque parecerse a los eventos
  en consola que lo solicite, o que lo actualice solo => no hace falta que lo solicite, lo arranco, tengo datos e imprimo info
  lo importante es la interoperabilidad entre los módulos
+
+ TODO extra:
+ cambiar fechas pa q coincidan
+
+ añadir datalake/eventStore...
+
+ Juntar los datos mediante location pero llamarlo name o location, no island o algo
+
+ TODO buscar como cambiar la currency de xotelo
  */

@@ -9,3 +9,5 @@ public class Main {
     }
 }
 //TODO cambiar nombre prediction price
+
+//TODO en readme poner que los datos del precio tardan algo más en salir
