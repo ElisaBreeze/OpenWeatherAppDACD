@@ -80,13 +80,13 @@ public class EventReceiver {
     }
 
     private void saveWeatherEvent(JsonObject event) {
-        counter = 0;
         String island = event.getAsJsonObject("location").get("island").getAsString();
         counter++;
         JsonObject islandWeatherEvent = new JsonObject();
         islandWeatherEvent.add("prediction" + counter, event);
         weatherEvents.computeIfAbsent(island, k -> new JsonArray()).add(islandWeatherEvent);
         weatherEventCountDown.countDown();
+        if(counter == 5) counter = 0;
     }
 
     private void saveHotelEvent(JsonObject event) {
