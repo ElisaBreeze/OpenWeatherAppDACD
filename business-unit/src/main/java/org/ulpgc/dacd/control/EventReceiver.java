@@ -8,24 +8,24 @@ import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class EventReceiver {
     //TODO change fechas so that they coincide with the 5 day prediction from now
-    //TODO change names and format
     private final String serverURL = ActiveMQConnection.DEFAULT_BROKER_URL;
     private Map<String, JsonArray> weatherEvents = new HashMap<>();
     private Map<String, JsonObject> hotelEvents = new HashMap<>();
     private int counter = 0;
-
-    // CountDownLatch for weather and hotel events
     private final CountDownLatch weatherEventCountDown = new CountDownLatch(40);
-    private final CountDownLatch hotelEventCountDown = new CountDownLatch(8);    //TODO si falla es porq antes ponia 7 por alguna razon
+    private final CountDownLatch hotelEventCountDown = new CountDownLatch(8); //TODO si falla probar con 7
 
-    public JsonObject messageReceiver() throws StoreException {
+    public List<JsonObject> messageReceiver() throws StoreException {
         try {
+            List<JsonObject> combinedEventsList = new ArrayList<>();
             Connection connection = new ActiveMQConnectionFactory(serverURL).createConnection();
             connection.setClientID("business-unit");
             connection.start();
@@ -35,7 +35,7 @@ public class EventReceiver {
 
             weatherEventCountDown.await();
             hotelEventCountDown.await();
-            return combineEvents();
+            return combineEvents(combinedEventsList);
 
         } catch (JMSException | InterruptedException exception) {
             throw new StoreException(exception.getMessage(), exception);
@@ -80,6 +80,7 @@ public class EventReceiver {
     }
 
     private void saveWeatherEvent(JsonObject event) {
+        counter = 0;
         String island = event.getAsJsonObject("location").get("island").getAsString();
         counter++;
         JsonObject islandWeatherEvent = new JsonObject();
@@ -94,7 +95,7 @@ public class EventReceiver {
         hotelEventCountDown.countDown();
     }
 
-    private JsonObject combineEvents() {
+    private List<JsonObject> combineEvents(List<JsonObject> combinedEventsList) {
         for (String island : weatherEvents.keySet()) {
             JsonArray event = weatherEvents.get(island);
             JsonObject combinedWeatherEvents = new JsonObject();
@@ -107,13 +108,13 @@ public class EventReceiver {
 
             JsonObject combinedEvents = new JsonObject();
             combinedEvents.addProperty("Location", island);
-            combinedEvents.add("CombinedWeatherEvents", combinedWeatherEvents);
-            combinedEvents.add("CombinedHotelEvent", hotelEvent);
+            combinedEvents.add("CombinedWeatherPredictions", combinedWeatherEvents);
+            combinedEvents.add("HotelInformation", hotelEvent);
 
+            combinedEventsList.add(combinedEvents);
             System.out.println("Combined Events: " + combinedEvents);
-            return combinedEvents;
         }
-        return null; //TODO lo quito?
+        return combinedEventsList;
     }
 }
 

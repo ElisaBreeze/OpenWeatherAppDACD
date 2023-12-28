@@ -1,17 +1,12 @@
 package org.ulpgc.dacd.control;
 
-import com.google.gson.JsonObject;
-
 public class Main {
-
     public static void main(String[] args) throws StoreException {
         EventReceiver eventReceiver = new EventReceiver();
-        JsonObject data = eventReceiver.messageReceiver();
         EventAnalyzer eventAnalyzer = new EventAnalyzer();
-        eventAnalyzer.eventAnalyzer(data);
-
-
+        EventController eventController = new EventController(eventReceiver, eventAnalyzer);
+        eventController.manager(); //TODO cambiar nombre??
     }
 }
 
-//TODO cambiar el nombre????
+//TODO acortar metodos a menos de 10 líneas
