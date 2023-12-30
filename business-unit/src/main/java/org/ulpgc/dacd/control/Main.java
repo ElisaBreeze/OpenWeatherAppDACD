@@ -4,7 +4,8 @@ public class Main {
     public static void main(String[] args) throws StoreException {
         EventReceiver eventReceiver = new EventReceiver();
         EventAnalyzer eventAnalyzer = new EventAnalyzer();
-        EventController eventController = new EventController(eventReceiver, eventAnalyzer);
+        InformationCreator informationCreator = new InformationCreator();
+        EventController eventController = new EventController(eventReceiver, eventAnalyzer, informationCreator);
         eventController.manager(); //TODO cambiar nombre??
     }
 }

@@ -15,13 +15,13 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class EventReceiver {
-    //TODO change fechas so that they coincide with the 5 day prediction from now
+    //TODO problema fechas
     private final String serverURL = ActiveMQConnection.DEFAULT_BROKER_URL;
     private Map<String, JsonArray> weatherEvents = new HashMap<>();
     private Map<String, JsonObject> hotelEvents = new HashMap<>();
     private int counter = 0;
-    private final CountDownLatch weatherEventCountDown = new CountDownLatch(40);
-    private final CountDownLatch hotelEventCountDown = new CountDownLatch(8); //TODO si falla probar con 7
+    private final CountDownLatch weatherEventCountDown = new CountDownLatch(50);
+    private final CountDownLatch hotelEventCountDown = new CountDownLatch(37);
 
     public List<JsonObject> messageReceiver() throws StoreException {
         try {

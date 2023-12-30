@@ -1,8 +1,6 @@
 package org.ulpgc.dacd.control;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import org.ulpgc.dacd.model.Price;
 import org.ulpgc.dacd.model.Hotel;
 
@@ -12,20 +10,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class XoteloPriceProvider implements PriceProvider {
-    //TODO checkin, checkout por argumentos
-    private final String checkIn;
-    private final String checkOut;
-
-    public XoteloPriceProvider(String checkIn, String checkOut) {
-
-        this.checkIn = checkIn;
-        this.checkOut = checkOut;
-    }
-
 
     @Override
     public List<Price> getPrice(Hotel hotel) throws StoreException {
@@ -42,11 +32,11 @@ public class XoteloPriceProvider implements PriceProvider {
             throw new StoreException(exception.getMessage(), exception);
         }
     }
-    private String apiCall(Hotel hotel) { //TODO cambiar fechas
+    private String apiCall(Hotel hotel) { //TODO explicar en README q se cogen los mismos dias que prediccion y que se quire buscar a que hotel ir pa los siguientes 5 días
         return "https://data.xotelo.com/api/rates" +
-                "?hotel_key=" +  hotel.getHotelKey() +
-                "&chk_in=" + checkIn +
-                "&chk_out=" + checkOut;
+                "?hotel_key=" + hotel.getHotelKey() +
+                "&chk_in=" + LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) +
+                "&chk_out=" + LocalDate.now().plusDays(6).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
     private HttpURLConnection connection(String apiCall) throws StoreException {
@@ -74,15 +64,26 @@ public class XoteloPriceProvider implements PriceProvider {
     }
 
     private void arrayProcessing(JsonObject jsonObject, List<Price> priceList, Hotel hotel) {
-        JsonArray jsonArray = jsonObject.getAsJsonObject("result").getAsJsonArray("rates");
-        for (int i = 0; i < jsonArray.size(); i++) {
-            priceDataProcessing(jsonArray.get(i).getAsJsonObject(), priceList, hotel);
+        JsonElement rates = jsonObject.getAsJsonObject("result").get("rates");
+        if(rates != null) {
+            JsonArray jsonArray = rates.getAsJsonArray();
+            for (int i = 0; i < jsonArray.size(); i++) {
+                priceDataProcessing(jsonArray.get(i).getAsJsonObject(), priceList, hotel);
         }
-    }
-
+        }else {
+            Price price = new Price(hotel, null, Instant.now(), "price-provider.Xotelo");
+            priceList.add(price);
+        }
+            }
+    //TODO EN algun momento cambiar a euros
     private void priceDataProcessing(JsonObject jsonArray, List<Price> priceList, Hotel hotel) {
         String code = jsonArray.get("code").getAsString();
         if("BookingCom".equals(code)) {
+            double rate = jsonArray.get("rate").getAsDouble();
+            Price price = new Price(hotel, rate, Instant.now(), "price-provider.Xotelo");
+            priceList.add(price);
+        }
+        else if("HotelsCom2".equals(code));{
             double rate = jsonArray.get("rate").getAsDouble();
             Price price = new Price(hotel, rate, Instant.now(), "price-provider.Xotelo");
             priceList.add(price);

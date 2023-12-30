@@ -9,7 +9,7 @@ public class Price {
     private String ss;
 
 
-    public Price(Hotel hotel, double price, Instant ts, String ss) {
+    public Price(Hotel hotel, Double price, Instant ts, String ss) {
         this.hotel = hotel;
         this.price = price;
         this.ts = ts;

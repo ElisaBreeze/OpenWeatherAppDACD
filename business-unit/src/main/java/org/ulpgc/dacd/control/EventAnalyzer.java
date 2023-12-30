@@ -1,38 +1,60 @@
 package org.ulpgc.dacd.control;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EventAnalyzer {
     private static final int GOOD = 3;
     private static final int OK = 1;
     private static final int BAD = 0;
 
-    //TODO falta best overall
-    public void bestOptions(List<JsonObject> eventLists) {
+    public Map<String, JsonObject> bestOptions(List<JsonObject> eventLists) {
+        Map<String, JsonObject> bestOptionsMap = new HashMap<>();
         double maxWeatherScore = Double.MIN_VALUE;
         double minPrice = Double.MAX_VALUE;
-        String bestPriceOption = null;
-        String bestWeatherOption = null;
+        double maxOverallScore = Double.MIN_VALUE;
+        JsonObject bestOverallOption = null;
+        JsonObject bestPriceOption = null;
+        JsonObject bestWeatherOption = null;
 
         for (JsonObject event : eventLists) {
             double weatherScore = combinedWeatherScore(event);
-            double hotelPrice = event.getAsJsonObject("HotelInformation").get("price").getAsDouble();
 
-            if (weatherScore > maxWeatherScore) {
-                maxWeatherScore = weatherScore;
-                bestWeatherOption = event.toString();
-            }
+            JsonElement priceElement = event.getAsJsonObject("HotelInformation").get("price");
+            if (priceElement == null) {
+                System.out.println("This Hotel is Not Available"); //TODO poner esto en otro sitio?
+            } else {
+                double hotelPrice = priceElement.getAsDouble();
 
-            if (hotelPrice < minPrice) {
-                minPrice = hotelPrice;
-                bestPriceOption = event.toString();
+
+                if (weatherScore > maxWeatherScore) {
+                    maxWeatherScore = weatherScore;
+                    bestWeatherOption = event;
+                }
+
+                if (hotelPrice < minPrice) {
+                    minPrice = hotelPrice;
+                    bestPriceOption = event;
+                }
+
+                double overallScore = (weatherScore * 0.6 + hotelPrice * 0.4);
+                if (overallScore > maxOverallScore) {
+                    maxOverallScore = overallScore;
+                    bestOverallOption = event;
+                }
             }
         }
-
         System.out.println("Best Weather Option: " + bestWeatherOption + "with score: " + maxWeatherScore);
         System.out.println("Best Price Option: " + bestPriceOption + "with score: " + minPrice);
+            bestOptionsMap.put("weather", bestWeatherOption);
+            bestOptionsMap.put("price", bestPriceOption);
+            bestOptionsMap.put("overall", bestOverallOption);
+        return bestOptionsMap;
+
     }
 
     private double combinedWeatherScore(JsonObject event) {
