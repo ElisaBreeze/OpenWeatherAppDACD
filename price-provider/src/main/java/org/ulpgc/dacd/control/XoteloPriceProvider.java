@@ -72,6 +72,7 @@ public class XoteloPriceProvider implements PriceProvider {
         }
         }else {
             Price price = new Price(hotel, null, Instant.now(), "price-provider.Xotelo");
+            System.out.println("HOTEL PROVIDER:" + price);
             priceList.add(price);
         }
             }
@@ -83,7 +84,11 @@ public class XoteloPriceProvider implements PriceProvider {
             Price price = new Price(hotel, rate, Instant.now(), "price-provider.Xotelo");
             priceList.add(price);
         }
-        else if("HotelsCom2".equals(code));{
+        else if("HotelsCom2".equals(code)){
+            double rate = jsonArray.get("rate").getAsDouble();
+            Price price = new Price(hotel, rate, Instant.now(), "price-provider.Xotelo");
+            priceList.add(price);
+        }else {
             double rate = jsonArray.get("rate").getAsDouble();
             Price price = new Price(hotel, rate, Instant.now(), "price-provider.Xotelo");
             priceList.add(price);

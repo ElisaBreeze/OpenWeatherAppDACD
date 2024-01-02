@@ -56,7 +56,7 @@ public class HotelDataController {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] information = line.split("\t");
-                Hotel hotel = new Hotel(information[0], information[1], information[2], information[3]); //TODO añadir los datos en ese orden y cambiar a date
+                Hotel hotel = new Hotel(information[0], information[1], information[2], information[3]);
                 hotelMap.put(information[0], hotel);
             }
         } catch (IOException | NullPointerException | NumberFormatException exception) {

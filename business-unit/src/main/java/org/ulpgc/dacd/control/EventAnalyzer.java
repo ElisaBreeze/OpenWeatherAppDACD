@@ -3,6 +3,7 @@ package org.ulpgc.dacd.control;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,14 +23,13 @@ public class EventAnalyzer {
         JsonObject bestWeatherOption = null;
 
         for (JsonObject event : eventLists) {
+            System.out.println(event);
             double weatherScore = combinedWeatherScore(event);
 
             JsonElement priceElement = event.getAsJsonObject("HotelInformation").get("price");
-            if (priceElement == null) {
-                System.out.println("This Hotel is Not Available"); //TODO poner esto en otro sitio?
-            } else {
-                double hotelPrice = priceElement.getAsDouble();
+            if (priceElement != null) {
 
+                double hotelPrice = priceElement.getAsDouble();
 
                 if (weatherScore > maxWeatherScore) {
                     maxWeatherScore = weatherScore;
@@ -48,8 +48,6 @@ public class EventAnalyzer {
                 }
             }
         }
-        System.out.println("Best Weather Option: " + bestWeatherOption + "with score: " + maxWeatherScore);
-        System.out.println("Best Price Option: " + bestPriceOption + "with score: " + minPrice);
             bestOptionsMap.put("weather", bestWeatherOption);
             bestOptionsMap.put("price", bestPriceOption);
             bestOptionsMap.put("overall", bestOverallOption);
@@ -63,7 +61,7 @@ public class EventAnalyzer {
         double temperatureScore = averageTemperature(combinedWeatherEvents);
         double cloudinessScore = averageCloudiness(combinedWeatherEvents);
 
-        return (temperatureScore * 0.5) + (precipitationScore * 0.3) + (cloudinessScore * 0.2); //TODO check if weights are ok
+        return (temperatureScore * 0.6) + (precipitationScore * 0.3) + (cloudinessScore * 0.1);
     }
 
     private double averagePrecipitation(JsonObject combinedWeatherEvents){

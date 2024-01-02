@@ -7,44 +7,30 @@ import java.util.Map;
 public class InformationCreator {
     public static void printInformation(Map<String, JsonObject> bestOptions) {
 
-        //TODO only seems to print 2 of the otpions, and the weather one, doesnt print the price.
-        //TODO check the scores and put out of how many? or dont need them 
+        for (Map.Entry<String, JsonObject> entry : bestOptions.entrySet()) {
+            String key = entry.getKey();
+            JsonObject event = entry.getValue();
 
-        int index = 0;
-        for (JsonObject event : bestOptions.values()) {
             String hotelName = event.getAsJsonObject("HotelInformation").getAsJsonObject("hotel").get("hotelName").getAsString();
-            String location = event.getAsJsonObject("HotelInformation").getAsJsonObject("hotel").get("island").getAsString();
+            String island = event.getAsJsonObject("HotelInformation").getAsJsonObject("hotel").get("island").getAsString();
+            String location = event.getAsJsonObject("HotelInformation").getAsJsonObject("hotel").get("city").getAsString();
 
-            System.out.println("Hotel Name: " + hotelName);
-            System.out.println("Location: " + location);
+            System.out.println("Best " + key + "Option: " + hotelName + ", Located in " + island + " in " + location);
 
-            if (index == 0) {
-                // This is the bestWeatherOption
-                printWeatherInformation(event.getAsJsonObject("CombinedWeatherPredictions"));
-            } else if (index == 1) {
-                // This is the bestPriceOption
-                double price = event.getAsJsonObject("HotelInformation").get("price").getAsDouble();
-                System.out.println("Price: " + price);
-            } else {
-                // This is the bestCombinedOption
-                printWeatherInformation(event.getAsJsonObject("CombinedWeatherPredictions"));
-                double price = event.getAsJsonObject("HotelInformation").get("price").getAsDouble();
-                System.out.println("Price: " + price);
-            }
+            double price = event.getAsJsonObject("HotelInformation").get("price").getAsDouble();
+            System.out.println("Total Price: " + price);
+            printWeatherInformation(event.getAsJsonObject("CombinedWeatherPredictions"));
 
             System.out.println("------------------------------");
-            index++;
         }
     }
 
-    private static void printWeatherInformation(JsonObject combinedWeatherEvents) {
-        System.out.println("Weather Predictions:");
+        private static void printWeatherInformation(JsonObject combinedWeatherEvents) {
+        System.out.println("Weather Predictions per Day:");
 
         for (int i = 1; i <= 5; i++) {
             String predictionNumber = "prediction" + i;
             JsonObject prediction = combinedWeatherEvents.getAsJsonObject(predictionNumber);
-
-            String predictionTime = prediction.get("predictionTime").getAsString();
             double temperature = prediction.get("temperature").getAsDouble();
             double humidity = prediction.get("humidity").getAsDouble();
             double precipitation = prediction.get("precipitation").getAsDouble();
@@ -52,12 +38,11 @@ public class InformationCreator {
             double clouds = prediction.get("clouds").getAsDouble();
 
             System.out.println("Day " + i + ":");
-            System.out.println("Prediction Time: " + predictionTime);
             System.out.println("Temperature: " + temperature);
             System.out.println("Humidity: " + humidity);
-            System.out.println("Precipitation: " + precipitation);
-            System.out.println("Wind: " + wind);
-            System.out.println("Clouds: " + clouds);
+            System.out.println("Precipitation: " + precipitation + "%");
+            System.out.println("Windspeed: " + wind);
+            System.out.println("Clouds: " + clouds +"% coverage");
             System.out.println("------------------------------");
         }
     }

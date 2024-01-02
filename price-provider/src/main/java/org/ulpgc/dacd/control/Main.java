@@ -8,6 +8,6 @@ public class Main {
         hotelDataControllerController.runTask();
     }
 }
-//TODO cambiar nombre prediction price
 
-//TODO en readme poner que los datos del precio tardan algo más en salir
+//TODO en readme poner que los datos del precio tardan algo más en salir y que se espera.
+//TODO dedvolver no disponibles y disponibles en dos listas?
