@@ -37,7 +37,7 @@ public class SQLDataStoreManager implements EventStore{
         Connection connection = this.open();
         try {
             createTables();
-            try (PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO events (ts, location, combinedWeatherPredictions, hotelInformation) VALUES (?, ?, ?, ?)")) {
+            try (PreparedStatement insertStatement = connection.prepareStatement("INSERT OR REPLACE INTO events (ts, location, combinedWeatherPredictions, hotelInformation) VALUES (?, ?, ?, ?)")) {
                 for (JsonObject event : eventList) {
                     String ts = event.get("CombinedWeatherPredictions").getAsJsonObject().get("prediction1").getAsJsonObject().get("ts").getAsString();
                     String location = event.get("Location").getAsString();

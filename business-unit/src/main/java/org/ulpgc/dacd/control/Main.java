@@ -3,13 +3,14 @@ package org.ulpgc.dacd.control;
 import java.sql.SQLException;
 
 public class Main {
-    public static void main(String[] args) throws StoreException, SQLException {
+    public static void main(String[] args) throws StoreException{
         EventReceiver eventReceiver = new EventReceiver();
         EventAnalyzer eventAnalyzer = new EventAnalyzer();
         InformationCreator informationCreator = new InformationCreator();
+        InformationDisplay informationDisplay = new InformationDisplay();
         SQLDataStoreManager eventStore = new SQLDataStoreManager();
-        EventController eventController = new EventController(eventReceiver, eventAnalyzer, informationCreator, eventStore);
-        eventController.manager(); //TODO cambiar nombre??
+        EventController eventController = new EventController(eventReceiver, eventAnalyzer, informationCreator,informationDisplay, eventStore);
+        eventController.manager();
 
     }
 }

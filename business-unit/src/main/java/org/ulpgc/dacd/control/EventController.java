@@ -10,16 +10,18 @@ public class EventController {
     private final EventReceiver eventReceiver;
     private final EventAnalyzer eventAnalyzer;
     private final InformationCreator informationCreator;
+    private final InformationDisplay informationDisplay;
     private final SQLDataStoreManager eventStore;
 
-    public EventController(EventReceiver eventReceiver, EventAnalyzer eventAnalyzer, InformationCreator informationCreator, SQLDataStoreManager eventStore){
+    public EventController(EventReceiver eventReceiver, EventAnalyzer eventAnalyzer, InformationCreator informationCreator, InformationDisplay informationDisplay, SQLDataStoreManager eventStore){
         this.eventAnalyzer = eventAnalyzer;
         this.eventReceiver = eventReceiver;
-        this.informationCreator = informationCreator;
+        this.informationCreator = informationCreator; //TODO borrar informationCreator una vez q fx funciona
+        this.informationDisplay = informationDisplay;
         this.eventStore = eventStore;
     }
 
-    public void manager() throws StoreException, SQLException { //TODO manejar las excpeciones
+    public void manager() throws StoreException {
         System.out.println("You want to go on a little trip on the Canary Islands in the next 5 days? \n Wait and see what your best options are!");
         System.out.println("Receiving data - this might take a moment");
         System.out.println("Please take into account that some hotels might not be available, only the available ones will be analyzed.");
@@ -32,5 +34,6 @@ public class EventController {
         Map<String, JsonObject> finalBestOptions = eventAnalyzer.bestOptions(eventLists);
         informationCreator.printInformation(finalBestOptions);
 
+        informationDisplay.display(finalBestOptions);
         }
 }

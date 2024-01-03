@@ -14,13 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-//TODO ver porq solo me guarda x hoteles y no todos?? le pasa solo los x al combine event asiq  ahi no es el problema
-//al broker le llegan cientos de eventos e hoteles cuando solo deberian ser 37 => check that, no tiene sentido, el probema estará en el sender
-//borro infor broker y ya no va lo de los datos??
+
+//TODO al broker le llegan cientos de eventos e hoteles cuando solo deberian ser 37 => check that, no tiene sentido, el probema estará en el sender
 public class EventReceiver {
     private final String serverURL = ActiveMQConnection.DEFAULT_BROKER_URL;
     private Map<String, JsonArray> weatherEvents = new HashMap<>();
-    private Map<String, JsonObject> hotelEvents = new HashMap<>();
+    private Map<String, List<JsonObject>> hotelEvents = new HashMap<>();
     private int counter = 0;
     private final CountDownLatch weatherEventCountDown = new CountDownLatch(50);
     private final CountDownLatch hotelEventCountDown = new CountDownLatch(37);
@@ -93,17 +92,30 @@ public class EventReceiver {
 
     private void saveHotelEvent(JsonObject event) {
         String island = event.getAsJsonObject("hotel").get("island").getAsString();
-        hotelEvents.put(island, event);
+
+        if (hotelEvents.containsKey(island)) {
+            List<JsonObject> eventsList = hotelEvents.get(island);
+            eventsList.add(event);
+        } else {
+            List<JsonObject> eventsList = new ArrayList<>();
+            eventsList.add(event);
+            hotelEvents.put(island, eventsList);
+        }
         hotelEventCountDown.countDown();
     }
 
     private List<JsonObject> combineEvents(List<JsonObject> combinedEventsList) {
-        for (JsonObject hotelEvent : hotelEvents.values()) {
-            System.out.println(hotelEvent);
-            String location = hotelEvent.getAsJsonObject("hotel").get("island").getAsString();
-            JsonObject combinedEvent = new JsonObject();
-            combinedEvent.addProperty("Location", location);
-            if (weatherEvents.containsKey(location)) { //TODO si funciona probar quitandoe esto
+        System.out.println("combineEvents full listas:");
+        System.out.println(hotelEvents);
+        System.out.println(weatherEvents);
+        for (Map.Entry<String, List<JsonObject>> entry : hotelEvents.entrySet()) {
+            String location = entry.getKey();
+            List<JsonObject> hotelEventList = entry.getValue();
+
+            for (JsonObject hotelEvent : hotelEventList) {
+                JsonObject combinedEvent = new JsonObject();
+                combinedEvent.addProperty("Location", location);
+
                 JsonArray weatherEventList = weatherEvents.get(location);
                 JsonObject combinedWeatherEvents = new JsonObject();
 
@@ -112,12 +124,11 @@ public class EventReceiver {
                     combinedWeatherEvents.add(weatherEvent.keySet().iterator().next(), weatherEvent.get(weatherEvent.keySet().iterator().next()));
                 }
                 combinedEvent.add("CombinedWeatherPredictions", combinedWeatherEvents);
-            }
-            combinedEvent.add("HotelInformation", hotelEvent);
-            combinedEventsList.add(combinedEvent);
-        }
 
+                combinedEvent.add("HotelInformation", hotelEvent);
+                combinedEventsList.add(combinedEvent);
+            }
+        }
         return combinedEventsList;
     }
 }
-
