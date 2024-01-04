@@ -3,7 +3,6 @@ package org.ulpgc.dacd.control;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,6 @@ public class EventAnalyzer {
         JsonObject bestWeatherOption = null;
 
         for (JsonObject event : eventLists) {
-            System.out.println(event);
             double weatherScore = combinedWeatherScore(event);
 
             JsonElement priceElement = event.getAsJsonObject("HotelInformation").get("price");
@@ -48,9 +46,9 @@ public class EventAnalyzer {
                 }
             }
         }
-            bestOptionsMap.put("weather", bestWeatherOption);
-            bestOptionsMap.put("price", bestPriceOption);
-            bestOptionsMap.put("overall", bestOverallOption);
+        bestOptionsMap.put("weather", bestWeatherOption);
+        bestOptionsMap.put("price", bestPriceOption);
+        bestOptionsMap.put("overall", bestOverallOption);
         return bestOptionsMap;
 
     }
@@ -126,4 +124,4 @@ public class EventAnalyzer {
             return BAD;
         }
     }
-    }
+}

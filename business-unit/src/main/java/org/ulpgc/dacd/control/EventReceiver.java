@@ -105,9 +105,6 @@ public class EventReceiver {
     }
 
     private List<JsonObject> combineEvents(List<JsonObject> combinedEventsList) {
-        System.out.println("combineEvents full listas:");
-        System.out.println(hotelEvents);
-        System.out.println(weatherEvents);
         for (Map.Entry<String, List<JsonObject>> entry : hotelEvents.entrySet()) {
             String location = entry.getKey();
             List<JsonObject> hotelEventList = entry.getValue();

@@ -9,4 +9,3 @@ public class Main {
     }
 }
 
-//TODO en readme poner que los datos del precio tardan algo más en salir y que se espera.
