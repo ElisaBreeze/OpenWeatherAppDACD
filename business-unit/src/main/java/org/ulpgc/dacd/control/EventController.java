@@ -21,7 +21,6 @@ public class EventController {
     public void manager() throws StoreException {
         List<JsonObject> eventLists = eventReceiver.messageReceiver();
         eventStore.save(eventLists);
-
         Map<String, JsonObject> finalBestOptions = eventAnalyzer.bestOptions(eventLists);
         eventStore.saveBestOptions(finalBestOptions);
         informationDisplayer.displayer();

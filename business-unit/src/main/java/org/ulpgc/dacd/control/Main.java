@@ -11,12 +11,13 @@ public class Main {
     }
 }
 //TODO check why there is concurrenterror sometimes
-//TODO revisar en todas las clases las excepciones
+//FALTA ACORTAR 1 metodo en analyzer
 //TODO ver porq se guardan tantos eventos del mismo sitio
 //datalake-builder y ver si va bien
 //cambiar nombre x-business-unit
 //TODO no olvidarme del release
 //TODO update readme y UML!
-//TODO en readme poner que los datos del precio tardan algo más en salir y que se espera.
+//TODO en readme poner que los datos del precio tardan algo más en salir y que se espera con el countdownlatch con el numero de eventos que van a llegar
+//TODO en readme explicar que cojo por prioridad datos booking, lgo hotelcom lgo cualquiera
 //TODO ORDENAR TODO; CONTROLLER Y TODO
 //TODO acortar metodos a menos de 10 líneas

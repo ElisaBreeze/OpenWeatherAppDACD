@@ -32,9 +32,9 @@ public class XoteloPriceProvider implements PriceProvider {
             throw new StoreException(exception.getMessage(), exception);
         }
     }
-    private String apiCall(Hotel hotel) { //TODO explicar en README q se cogen los mismos dias que prediccion y que se quire buscar a que hotel ir pa los siguientes 5 días
+    private String apiCall(Hotel hotel) {
         return "https://data.xotelo.com/api/rates" +
-                "?hotel_key=" + hotel.getHotelKey() +
+                "?hotel_key=" + hotel.getHotelKey() + "&currency=EUR" +
                 "&chk_in=" + LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) +
                 "&chk_out=" + LocalDate.now().plusDays(6).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
@@ -65,32 +65,29 @@ public class XoteloPriceProvider implements PriceProvider {
 
     private void arrayProcessing(JsonObject jsonObject, List<Price> priceList, Hotel hotel) {
         JsonElement rates = jsonObject.getAsJsonObject("result").get("rates");
-        if(rates != null) {
+        if (rates != null) {
             JsonArray jsonArray = rates.getAsJsonArray();
             for (int i = 0; i < jsonArray.size(); i++) {
                 priceDataProcessing(jsonArray.get(i).getAsJsonObject(), priceList, hotel);
         }
-        }else {
+        } else {
             Price price = new Price(hotel, null, Instant.now(), "price-provider.Xotelo");
             System.out.println("HOTEL PROVIDER:" + price);
             priceList.add(price);
         }
             }
-    //TODO EN algun momento cambiar a euros
+
     private void priceDataProcessing(JsonObject jsonArray, List<Price> priceList, Hotel hotel) {
         String code = jsonArray.get("code").getAsString();
         if("BookingCom".equals(code)) {
-            double rate = jsonArray.get("rate").getAsDouble();
-            Price price = new Price(hotel, rate, Instant.now(), "price-provider.Xotelo");
+            Price price = new Price(hotel, jsonArray.get("rate").getAsDouble(), Instant.now(), "price-provider.Xotelo");
             priceList.add(price);
         }
         else if("HotelsCom2".equals(code)){
-            double rate = jsonArray.get("rate").getAsDouble();
-            Price price = new Price(hotel, rate, Instant.now(), "price-provider.Xotelo");
+            Price price = new Price(hotel, jsonArray.get("rate").getAsDouble(), Instant.now(), "price-provider.Xotelo");
             priceList.add(price);
-        }else {
-            double rate = jsonArray.get("rate").getAsDouble();
-            Price price = new Price(hotel, rate, Instant.now(), "price-provider.Xotelo");
+        } else {
+            Price price = new Price(hotel, jsonArray.get("rate").getAsDouble(), Instant.now(), "price-provider.Xotelo");
             priceList.add(price);
         }
     }

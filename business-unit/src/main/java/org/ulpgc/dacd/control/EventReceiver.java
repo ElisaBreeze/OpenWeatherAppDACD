@@ -6,7 +6,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
-
 import javax.jms.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-
-//TODO al broker le llegan cientos de eventos e hoteles cuando solo deberian ser 37 => check that, no tiene sentido, el probema estará en el sender
 public class EventReceiver {
     private final String serverURL = ActiveMQConnection.DEFAULT_BROKER_URL;
     private Map<String, JsonArray> weatherEvents = new HashMap<>();
@@ -33,15 +30,12 @@ public class EventReceiver {
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             createSubscription(session, "prediction.Weather");
             createSubscription(session, "hotel.information");
-
             weatherEventCountDown.await();
             hotelEventCountDown.await();
             return combineEvents(combinedEventsList);
-
         } catch (JMSException | InterruptedException exception) {
             throw new StoreException(exception.getMessage(), exception);
         }
-
     }
 
     private void createSubscription(Session session, String topic) throws StoreException {
@@ -92,7 +86,6 @@ public class EventReceiver {
 
     private void saveHotelEvent(JsonObject event) {
         String island = event.getAsJsonObject("hotel").get("island").getAsString();
-
         if (hotelEvents.containsKey(island)) {
             List<JsonObject> eventsList = hotelEvents.get(island);
             eventsList.add(event);
@@ -107,25 +100,24 @@ public class EventReceiver {
     private List<JsonObject> combineEvents(List<JsonObject> combinedEventsList) {
         for (Map.Entry<String, List<JsonObject>> entry : hotelEvents.entrySet()) {
             String location = entry.getKey();
-            List<JsonObject> hotelEventList = entry.getValue();
-
-            for (JsonObject hotelEvent : hotelEventList) {
-                JsonObject combinedEvent = new JsonObject();
-                combinedEvent.addProperty("Location", location);
-
-                JsonArray weatherEventList = weatherEvents.get(location);
-                JsonObject combinedWeatherEvents = new JsonObject();
-
-                for (JsonElement weatherEventElement : weatherEventList) {
-                    JsonObject weatherEvent = weatherEventElement.getAsJsonObject();
-                    combinedWeatherEvents.add(weatherEvent.keySet().iterator().next(), weatherEvent.get(weatherEvent.keySet().iterator().next()));
-                }
-                combinedEvent.add("CombinedWeatherPredictions", combinedWeatherEvents);
-
-                combinedEvent.add("HotelInformation", hotelEvent);
+            for (JsonObject hotelEvent : entry.getValue()) {
+                JsonObject combinedEvent = createCombinedEvent(location, hotelEvent);
                 combinedEventsList.add(combinedEvent);
             }
         }
         return combinedEventsList;
+    }
+
+    private JsonObject createCombinedEvent(String location, JsonObject hotelEvent) {
+        JsonObject combinedEvent = new JsonObject();
+        combinedEvent.addProperty("Location", location);
+        JsonObject combinedWeatherEvents = new JsonObject();
+        for (JsonElement weatherEventElement : weatherEvents.get(location)) {
+            JsonObject weatherEvent = weatherEventElement.getAsJsonObject();
+            combinedWeatherEvents.add(weatherEvent.keySet().iterator().next(), weatherEvent.get(weatherEvent.keySet().iterator().next()));
+        }
+        combinedEvent.add("CombinedWeatherPredictions", combinedWeatherEvents);
+        combinedEvent.add("HotelInformation", hotelEvent);
+        return combinedEvent;
     }
 }
