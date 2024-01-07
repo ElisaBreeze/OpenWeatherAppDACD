@@ -2,7 +2,6 @@ package org.ulpgc.dacd.control;
 
 import org.ulpgc.dacd.model.Hotel;
 import org.ulpgc.dacd.model.Price;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

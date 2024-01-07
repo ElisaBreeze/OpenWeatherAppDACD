@@ -21,7 +21,7 @@ public class EventReceiver {
         public void messageReceiver() throws StoreException {
             try {
                 Connection connection = new ActiveMQConnectionFactory(serverURL).createConnection();
-                connection.setClientID("event-store-builder");
+                connection.setClientID("datalake-builder");
                 connection.start();
                 Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
                 createSubscription(session, "prediction.Weather");
@@ -35,7 +35,7 @@ public class EventReceiver {
         private void createSubscription(Session session, String topic) throws StoreException {
             try{
                 Topic topicName = session.createTopic(topic);
-                MessageConsumer consumer = session.createDurableSubscriber(topicName,"eventStoreBuilder-" + topic);
+                MessageConsumer consumer = session.createDurableSubscriber(topicName,"datalakeBuilder-" + topic);
                 consumer.setMessageListener(message -> {
                     try {
                         messageCreator(message, topic);

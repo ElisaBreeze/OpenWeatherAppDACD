@@ -1,7 +1,6 @@
 package org.ulpgc.dacd.control;
 
 import com.google.gson.*;
-
 import java.lang.reflect.Type;
 import java.time.Instant;
 

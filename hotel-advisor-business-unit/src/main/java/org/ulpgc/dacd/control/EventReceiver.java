@@ -25,7 +25,7 @@ public class EventReceiver {
         try {
             List<JsonObject> combinedEventsList = new ArrayList<>();
             Connection connection = new ActiveMQConnectionFactory(serverURL).createConnection();
-            connection.setClientID("business-unit");
+            connection.setClientID("hotel-advisor-business-unit");
             connection.start();
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             createSubscription(session, "prediction.Weather");
@@ -41,7 +41,7 @@ public class EventReceiver {
     private void createSubscription(Session session, String topic) throws StoreException {
         try {
             Topic topicName = session.createTopic(topic);
-            MessageConsumer consumer = session.createDurableSubscriber(topicName, "businessUnit-" + topic);
+            MessageConsumer consumer = session.createDurableSubscriber(topicName, "hotelAdvisorBusinessUnit-" + topic);
             consumer.setMessageListener(message -> {
                 try {
                     messageCreator(message, topic);
@@ -86,13 +86,15 @@ public class EventReceiver {
 
     private void saveHotelEvent(JsonObject event) {
         String island = event.getAsJsonObject("hotel").get("island").getAsString();
-        if (hotelEvents.containsKey(island)) {
-            List<JsonObject> eventsList = hotelEvents.get(island);
-            eventsList.add(event);
-        } else {
-            List<JsonObject> eventsList = new ArrayList<>();
-            eventsList.add(event);
-            hotelEvents.put(island, eventsList);
+        if(event.get("price").getAsDouble() != 0.0) {
+            if (hotelEvents.containsKey(island)) {
+                List<JsonObject> eventsList = hotelEvents.get(island);
+                eventsList.add(event);
+            } else {
+                List<JsonObject> eventsList = new ArrayList<>();
+                eventsList.add(event);
+                hotelEvents.put(island, eventsList);
+            }
         }
         hotelEventCountDown.countDown();
     }

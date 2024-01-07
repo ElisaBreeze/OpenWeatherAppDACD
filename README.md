@@ -15,7 +15,7 @@ In the second practice, the objective is to create a Java application that queri
 The prediction-provider module takes the data from the OpenWeatherMapAPI, and sends it as an event to a message broker using the Java Message Service.
 On the other hand, the event-store-builder module listens to the message broker, collects the data and saves them in separate files, named by the query date.
 
-In the final project, the idea was to incorporate a business idea, which meant to include another api. In this case Xotelo was used to provide information about hotel prices periodically every 6 hours to obtain the price for the next 5 days, so that in coincides with the weather prediction time frame.
+In the final project, the idea was to incorporate a business idea, which meant to include another api and analyze and expose the data of the moment to the client. In this case Xotelo was used to provide information about hotel prices periodically every 6 hours to obtain the price for the next 5 days, so that in coincides with the weather prediction time frame.
 The weather and hotel information are sent to the broker and then the datalake-builder recollects the information and saves it to a file, and a new module was added for the business unit.
 This new module recollects the information of the weather predictions and the hotel information and processes them to be used. Once the information is processed, it is saves in a database using SQLite, by combining the corresponding weather predictions for the location for each hotel. 
 At the same time the data is going to be analyzed, and it is going to calculate the best options depending on the price, the weather or overall. These options will then be incorporated in a new table in a database and once this is done, a displayer class has been created to display the information to the client. 
@@ -77,10 +77,6 @@ This program uses the java version 17. To run the code properly, you must insert
 In this case, to facilitate implementation and organization, the route to the creation of the directories is already defined as wanted in the practices and final project. 
 It is important to know at this point that the Xotelo API provides data slowly and might take a while, so a bit of patience is requiered, but once the data has arrived, it will be analyzed, saved and exposed to the client. 
 To ensure all the data has arrived and to analyze all the data at the same time, I have incorporated two CountDownLatches, which initial number is going to be the amount of hotel and weather data expected, and will count down every time one arrived. Once it gets to zero, it will start processing and analyzing the data.
-With this, the only thing left to do is to run the program and see how the weather and price data is saved in the directory, with the query date as its file name.
+With this, the only thing left to do is to run the program (first the datalake-builder and hotel-advisor-business-unit, then the prediction and price provider) and see how the weather and price data is saved in the directory, with the query date as its file name.
 It is important to know that this program is designed to run the task every 6 hours, storing the data in the files created in the directory.
 At the same time, the data will be recollected by the business unit, and once the data that is wanted for the client is ready, it's saved to the Datamart, and the information is shown to the client, by asking what type of information they are looking for and showing the wanted options. 
-
-
-
-

@@ -3,7 +3,6 @@ package org.ulpgc.dacd.control;
 import com.google.gson.*;
 import org.ulpgc.dacd.model.Price;
 import org.ulpgc.dacd.model.Hotel;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class XoteloPriceProvider implements PriceProvider {
-    int counter = 0;
     @Override
     public List<Price> getPrice(Hotel hotel) throws StoreException {
         List<Price> priceList = new ArrayList<>();
@@ -55,6 +53,7 @@ public class XoteloPriceProvider implements PriceProvider {
             StringBuilder response = new StringBuilder();
             while ((line = bufferedReader.readLine()) != null) {
                 response.append(line);
+
             }
             return response.toString();
         } catch (IOException exception) {
@@ -63,25 +62,12 @@ public class XoteloPriceProvider implements PriceProvider {
     }
 
     private void arrayProcessing(JsonObject jsonObject, List<Price> priceList, Hotel hotel) {
-        JsonElement rates = jsonObject.getAsJsonObject("result").get("rates");
-        if (rates != null) {
-            JsonArray jsonArray = rates.getAsJsonArray();
-            for (int i = 0; i < jsonArray.size(); i++) {
-                priceDataProcessing(jsonArray.get(i).getAsJsonObject(), priceList, hotel);
-        }
+        JsonArray rates = jsonObject.getAsJsonObject("result").get("rates").getAsJsonArray();
+        if (!rates.isEmpty()) {
+            priceList.add(new Price(hotel, rates.get(0).getAsJsonObject().get("rate").getAsDouble(), Instant.now(), "price-provider.Xotelo"));
         } else {
-            boolean priceInList = priceList.stream().anyMatch(existingPrice -> existingPrice.getHotel().equals(hotel));
-            if (!priceInList) {
-                Price price = new Price(hotel, null, Instant.now(), "price-provider.Xotelo");
-                priceList.add(price);
-        }
-        }
-            }
-
-    private void priceDataProcessing(JsonObject jsonArray, List<Price> priceList, Hotel hotel) {
-        boolean priceInList = priceList.stream().anyMatch(existingPrice -> existingPrice.getHotel().equals(hotel));
-        if (!priceInList) {
-            priceList.add(new Price(hotel, jsonArray.get("rate").getAsDouble(), Instant.now(), "price-provider.Xotelo"));
+            Price price = new Price(hotel, 0.0, Instant.now(), "price-provider.Xotelo");
+            priceList.add(price);
         }
     }
 }

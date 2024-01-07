@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.ulpgc.dacd.model.Price;
-
 import javax.jms.*;
 import java.time.Instant;
 

@@ -21,9 +21,8 @@ public class EventAnalyzer {
     public Map<String, JsonObject> bestOptions(List<JsonObject> eventLists) {
         for (JsonObject event : eventLists) {
             double weatherScore = combinedWeatherScore(event);
-            JsonElement priceElement = event.getAsJsonObject("HotelInformation").get("price");
-            if (priceElement != null) {
-                double hotelPrice = priceElement.getAsDouble();
+            double hotelPrice = event.getAsJsonObject("HotelInformation").get("price").getAsDouble();
+            if (hotelPrice != 0.0) {
                 if (weatherScore > maxWeatherScore) {
                     maxWeatherScore = weatherScore;
                     bestWeatherOption = event;
