@@ -11,36 +11,27 @@ public class EventAnalyzer {
     private static final int GOOD = 3;
     private static final int OK = 1;
     private static final int BAD = 0;
-
-    //TODO acortar método
+    private double maxWeatherScore = Double.MIN_VALUE;
+    private double minPrice = Double.MAX_VALUE;
+    private double maxOverallScore = Double.MIN_VALUE;
+    private JsonObject bestOverallOption = null;
+    private JsonObject bestPriceOption = null;
+    private JsonObject bestWeatherOption = null;
 
     public Map<String, JsonObject> bestOptions(List<JsonObject> eventLists) {
-        Map<String, JsonObject> bestOptionsMap = new HashMap<>();
-        double maxWeatherScore = Double.MIN_VALUE;
-        double minPrice = Double.MAX_VALUE;
-        double maxOverallScore = Double.MIN_VALUE;
-        JsonObject bestOverallOption = null;
-        JsonObject bestPriceOption = null;
-        JsonObject bestWeatherOption = null;
-
         for (JsonObject event : eventLists) {
             double weatherScore = combinedWeatherScore(event);
-
             JsonElement priceElement = event.getAsJsonObject("HotelInformation").get("price");
             if (priceElement != null) {
-
                 double hotelPrice = priceElement.getAsDouble();
-
                 if (weatherScore > maxWeatherScore) {
                     maxWeatherScore = weatherScore;
                     bestWeatherOption = event;
                 }
-
                 if (hotelPrice < minPrice) {
                     minPrice = hotelPrice;
                     bestPriceOption = event;
                 }
-
                 double overallScore = (weatherScore * 0.6 + hotelPrice * 0.4);
                 if (overallScore > maxOverallScore) {
                     maxOverallScore = overallScore;
@@ -48,11 +39,17 @@ public class EventAnalyzer {
                 }
             }
         }
+        return saveOptionsInMap(bestWeatherOption, bestPriceOption, bestOverallOption);
+    }
+
+
+
+    private Map<String, JsonObject> saveOptionsInMap(JsonObject bestWeatherOption,JsonObject bestPriceOption,JsonObject bestOverallOption){
+        Map<java.lang.String, com.google.gson.JsonObject> bestOptionsMap = new HashMap<>();
         bestOptionsMap.put("weather", bestWeatherOption);
         bestOptionsMap.put("price", bestPriceOption);
         bestOptionsMap.put("overall", bestOverallOption);
         return bestOptionsMap;
-
     }
 
 

@@ -15,12 +15,8 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-//TODO VER SI SE GUARDA BIEN EN EL DATALAKE
 public class EventReceiver {
         private final String serverURL = ActiveMQConnection.DEFAULT_BROKER_URL;
-        private final String eventStoringPath; //TODO ver cómo hago esto, tiene que ser por argumento???
-//TODO si no uso el argumento, quitar constructor
-        public EventReceiver(String eventStoringPath, String arg){ this.eventStoringPath = eventStoringPath; }
 
         public void messageReceiver() throws StoreException {
             try {

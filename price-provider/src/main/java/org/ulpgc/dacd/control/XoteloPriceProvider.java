@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class XoteloPriceProvider implements PriceProvider {
-
+    int counter = 0;
     @Override
     public List<Price> getPrice(Hotel hotel) throws StoreException {
         List<Price> priceList = new ArrayList<>();
@@ -54,7 +54,6 @@ public class XoteloPriceProvider implements PriceProvider {
             String line;
             StringBuilder response = new StringBuilder();
             while ((line = bufferedReader.readLine()) != null) {
-                System.out.println(line);
                 response.append(line);
             }
             return response.toString();
@@ -71,24 +70,18 @@ public class XoteloPriceProvider implements PriceProvider {
                 priceDataProcessing(jsonArray.get(i).getAsJsonObject(), priceList, hotel);
         }
         } else {
-            Price price = new Price(hotel, null, Instant.now(), "price-provider.Xotelo");
-            System.out.println("HOTEL PROVIDER:" + price);
-            priceList.add(price);
+            boolean priceInList = priceList.stream().anyMatch(existingPrice -> existingPrice.getHotel().equals(hotel));
+            if (!priceInList) {
+                Price price = new Price(hotel, null, Instant.now(), "price-provider.Xotelo");
+                priceList.add(price);
+        }
         }
             }
 
     private void priceDataProcessing(JsonObject jsonArray, List<Price> priceList, Hotel hotel) {
-        String code = jsonArray.get("code").getAsString();
-        if("BookingCom".equals(code)) {
-            Price price = new Price(hotel, jsonArray.get("rate").getAsDouble(), Instant.now(), "price-provider.Xotelo");
-            priceList.add(price);
-        }
-        else if("HotelsCom2".equals(code)){
-            Price price = new Price(hotel, jsonArray.get("rate").getAsDouble(), Instant.now(), "price-provider.Xotelo");
-            priceList.add(price);
-        } else {
-            Price price = new Price(hotel, jsonArray.get("rate").getAsDouble(), Instant.now(), "price-provider.Xotelo");
-            priceList.add(price);
+        boolean priceInList = priceList.stream().anyMatch(existingPrice -> existingPrice.getHotel().equals(hotel));
+        if (!priceInList) {
+            priceList.add(new Price(hotel, jsonArray.get("rate").getAsDouble(), Instant.now(), "price-provider.Xotelo"));
         }
     }
 }

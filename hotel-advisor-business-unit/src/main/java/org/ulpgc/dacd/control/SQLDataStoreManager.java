@@ -69,6 +69,7 @@ public class SQLDataStoreManager implements EventStore {
     public void save(List<JsonObject> eventList) throws StoreException {
         try (Connection connection = open()) {
             createTables();
+            cleanTables();
             try (PreparedStatement insertStatement = connection.prepareStatement(hotelModifier)) {
                 for (JsonObject event : eventList) {
                     saveHotelInformation(event, insertStatement);
@@ -119,7 +120,6 @@ public class SQLDataStoreManager implements EventStore {
     public void saveBestOptions(Map<String, JsonObject> bestOptionsMap) throws StoreException {
         try (Connection connection = open();
              PreparedStatement insertStatementBestOptions = connection.prepareStatement(bestOptionsModifier)) {
-            System.out.println(bestOptionsMap);
             for (Map.Entry<String, JsonObject> entry : bestOptionsMap.entrySet()) {
                 saveOption(entry.getKey(), entry.getValue(), insertStatementBestOptions);
             }
@@ -164,5 +164,15 @@ public class SQLDataStoreManager implements EventStore {
         insertStatementBestOptions.setDouble(8 + (predictionIndex - 1) * 3, temperature);
         insertStatementBestOptions.setDouble(9 + (predictionIndex - 1) * 3, precipitation);
         insertStatementBestOptions.setDouble(10 + (predictionIndex - 1) * 3, clouds);
+    }
+
+    public void cleanTables() {
+        try (Connection connection = open();
+             Statement statement = connection.createStatement()) {
+            statement.execute("DELETE FROM Hotels");
+            statement.execute("DELETE FROM BestOptions");
+        } catch (StoreException | SQLException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 }

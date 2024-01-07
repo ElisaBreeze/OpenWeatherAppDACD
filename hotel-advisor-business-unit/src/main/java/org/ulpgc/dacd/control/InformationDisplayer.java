@@ -100,6 +100,8 @@ public class InformationDisplayer {
             System.out.println("------------------------\nInformation about the chosen Option:");
             while (resultSet.next()) {
                 System.out.println("Hotel Name: " + resultSet.getString("hotelName"));
+                System.out.println("Location: " + resultSet.getString("location"));
+                System.out.println("City: " + resultSet.getString("city"));
                 System.out.println("Price: " + resultSet.getDouble("price")+ "€");
                 System.out.println("------------------------");
                 showWeatherPredictions(resultSet);
