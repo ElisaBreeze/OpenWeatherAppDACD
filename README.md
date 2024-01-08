@@ -73,8 +73,7 @@ Dependency Relationships refers to the connections between classes and its compo
 - In the hotel-advisor-business-unit module, the classes EventAnalyzer, EventController, EventReceiver, InformationDisplayer and SQLDataStoreManager depend on the StoreException class to manage the exceptions
 
 ## Usage Instructions
-This program uses the java version 17. To run the code properly, you must insert your apikey through arguments in the Main class of prediction-provider and set up ActiveMQ as the message broker.
-In this case, to facilitate implementation and organization, the route to the creation of the directories is already defined as wanted in the practices and final project. 
+This program uses the java version 17. To run the code properly, you must insert your apikey through arguments in the Main class of prediction-provider and set up ActiveMQ as the message broker. In the datalake-builder, you must insert the root directory of the datalake in the arguments aswell.
 It is important to know at this point that the Xotelo API provides data slowly and might take a while, so a bit of patience is requiered, but once the data has arrived, it will be analyzed, saved and exposed to the client. 
 To ensure all the data has arrived and to analyze all the data at the same time, I have incorporated two CountDownLatches, which initial number is going to be the amount of hotel and weather data expected, and will count down every time one arrived. Once it gets to zero, it will start processing and analyzing the data.
 With this, the only thing left to do is to run the program (first the datalake-builder and hotel-advisor-business-unit, then the prediction and price provider) and see how the weather and price data is saved in the directory, with the query date as its file name.

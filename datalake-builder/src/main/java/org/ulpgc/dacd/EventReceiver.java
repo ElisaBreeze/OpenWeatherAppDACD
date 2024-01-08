@@ -16,9 +16,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class EventReceiver {
-        private final String serverURL = ActiveMQConnection.DEFAULT_BROKER_URL;
+    private final String serverURL = ActiveMQConnection.DEFAULT_BROKER_URL;
+    private final String rootDirectory;
 
-        public void messageReceiver() throws StoreException {
+    public EventReceiver(String rootDirectory) { this.rootDirectory = rootDirectory;}
+
+    public void messageReceiver() throws StoreException {
             try {
                 Connection connection = new ActiveMQConnectionFactory(serverURL).createConnection();
                 connection.setClientID("datalake-builder");
@@ -72,7 +75,7 @@ public class EventReceiver {
             String tsNotFormatted = jsonObject.get("ts").getAsString();
             String ss = jsonObject.get("ss").getAsString();
             String ts = dateFormatter(tsNotFormatted);
-            Path filePath = Paths.get("datalake/eventStore/" + topic, ss, ts + ".events");
+            Path filePath = Paths.get(rootDirectory + "datalake/eventStore/" + topic, ss, ts + ".events");
             directoryCreator(filePath.getParent());
             return filePath.toFile();
         }
