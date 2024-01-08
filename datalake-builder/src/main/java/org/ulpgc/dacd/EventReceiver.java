@@ -75,7 +75,7 @@ public class EventReceiver {
             String tsNotFormatted = jsonObject.get("ts").getAsString();
             String ss = jsonObject.get("ss").getAsString();
             String ts = dateFormatter(tsNotFormatted);
-            Path filePath = Paths.get(rootDirectory + "datalake/eventStore/" + topic, ss, ts + ".events");
+            Path filePath = Paths.get(rootDirectory + "/datalake/eventStore/" + topic, ss, ts + ".events");
             directoryCreator(filePath.getParent());
             return filePath.toFile();
         }
